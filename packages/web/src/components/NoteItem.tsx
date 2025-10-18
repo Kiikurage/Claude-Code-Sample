@@ -65,6 +65,7 @@ export function NoteItem({
 						fontSize: "14px",
 						border: "1px solid #ccc",
 						borderRadius: "4px",
+						boxSizing: "border-box",
 					}}
 				/>
 			</div>
@@ -93,6 +94,7 @@ export function NoteItem({
 						border: "1px solid #ccc",
 						borderRadius: "4px",
 						resize: "vertical",
+						boxSizing: "border-box",
 					}}
 				/>
 			</div>
