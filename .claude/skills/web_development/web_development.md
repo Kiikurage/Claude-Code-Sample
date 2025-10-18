@@ -267,7 +267,25 @@
         ...
     </div>
     ```
-  
+
+- ウィンドウ全体に広がるレイアウトコンテナを作成する際は、`100vh`や`100%`ではなく`position: fixed`と`inset: 0`を使用しなさい。この方法はセマンティクス的に適切で、レイアウト崩れも少なくなります。
+
+    - [BAD] 100vhを使用している
+
+        ```tsx
+        <div style={{ height: "100vh", overflow: "hidden" }}>
+            ...
+        </div>
+        ```
+
+    - [GOOD] position:fixedとinset:0を使用している
+
+        ```tsx
+        <div style={{ position: "fixed", inset: 0, overflow: "hidden" }}>
+            ...
+        </div>
+        ```
+
 - Reactコンポーネントのテストで関数・データをモックする際に、モック対象にその後アクセスする必要がない場合は、モックを変数に束縛せずにインラインで定義しなさい。
 
     - [BAD] mockした関数を変数に束縛している
