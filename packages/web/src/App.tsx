@@ -6,6 +6,7 @@ import type { Note } from "@app/common";
 import type { ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { BuildInfo } from "./components/BuildInfo.js";
 import { NoteList } from "./components/NoteList.js";
 
 export function App(): ReactElement {
@@ -77,6 +78,7 @@ export function App(): ReactElement {
 				onDelete={handleDeleteNote}
 				onAdd={handleAddNote}
 			/>
+			<BuildInfo />
 		</div>
 	);
 }
