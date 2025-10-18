@@ -9,8 +9,8 @@
 	},
 	"scripts": {
 		"test": "bun test",
-		"lint": "biome check .",
-		"check": "biome check ."
+		"lint": "biome check ./src --fix",
+		"check": "tsc --noEmit"
 	},
 	"devDependencies": {
 		"@types/bun": "latest"
