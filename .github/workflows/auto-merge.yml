@@ -6,7 +6,7 @@ on:
 
 jobs:
   automerge:
-    if: github.event.check_suite.conclusion == 'success'
+    if: github.event.check_suite.conclusion == 'SUCCESS'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
