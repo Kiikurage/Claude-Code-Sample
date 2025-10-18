@@ -5,7 +5,7 @@
 import type { Note } from "@app/common";
 import { describe, expect, test } from "bun:test";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { NoteListSidebar } from "./NoteListSidebar";
+import { NoteListSidebar } from "./NoteListSidebar.js";
 
 describe("NoteListSidebar", () => {
 	const mockNotes: Note[] = [

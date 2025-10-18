@@ -4,7 +4,7 @@
 
 import { describe, expect, test } from "bun:test";
 import { render, screen } from "@testing-library/react";
-import { Layout } from "./Layout";
+import { Layout } from "./Layout.js";
 
 describe("Layout", () => {
 	test("should render sidebar and main content", () => {

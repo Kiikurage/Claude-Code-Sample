@@ -5,7 +5,7 @@
 import type { Note } from "@app/common";
 import { describe, expect, test } from "bun:test";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { NoteEditor } from "./NoteEditor";
+import { NoteEditor } from "./NoteEditor.js";
 
 describe("NoteEditor", () => {
 	const mockNote: Note = {
