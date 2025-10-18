@@ -146,6 +146,15 @@ class WorkPlanManager:
                 first_line = item.body.strip().split("\n")[0]
                 print(f"    {first_line}")
 
+    def clear_all(self):
+        """全ての作業項目を削除（WORK_PLAN.mdを削除）"""
+        if self.plan_file.exists():
+            self.plan_file.unlink()
+            self.items = []
+            print("Work plan cleared (WORK_PLAN.md deleted)")
+        else:
+            print("No work plan to clear")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Work plan manager")
@@ -165,6 +174,9 @@ def main():
 
     # List command
     subparsers.add_parser("list", help="List all work items")
+
+    # Clear command
+    subparsers.add_parser("clear", help="Clear all work items (delete WORK_PLAN.md)")
 
     args = parser.parse_args()
 
@@ -196,6 +208,9 @@ def main():
 
     elif args.command == "list":
         manager.list_all()
+
+    elif args.command == "clear":
+        manager.clear_all()
 
 
 if __name__ == "__main__":
