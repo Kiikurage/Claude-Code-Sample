@@ -2,8 +2,8 @@
  * NoteEditor Component Tests
  */
 
-import type { Note } from "@app/common";
 import { describe, expect, test } from "bun:test";
+import type { Note } from "@app/common";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NoteEditor } from "./NoteEditor.js";
 
@@ -61,9 +61,7 @@ describe("NoteEditor", () => {
 			/>,
 		);
 
-		expect(
-			screen.getByText(/作成日時: 2024\/1\/1/),
-		).toBeTruthy();
+		expect(screen.getByText(/作成日時: 2024\/1\/1/)).toBeTruthy();
 	});
 
 	test("should call onUpdate when title is changed", () => {

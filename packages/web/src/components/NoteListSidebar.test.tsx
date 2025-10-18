@@ -2,10 +2,15 @@
  * NoteListSidebar Component Tests
  */
 
-import type { Note } from "@app/common";
 import { describe, expect, test } from "bun:test";
+import type { Note } from "@app/common";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { NoteListSidebar } from "./NoteListSidebar.js";
+
+// Mock global variables used by BuildInfo
+globalThis.__GIT_COMMIT_HASH__ = "test-hash";
+globalThis.__GIT_COMMIT_DATE__ = "2024-01-01T00:00:00.000Z";
+globalThis.__GIT_BRANCH__ = "master";
 
 describe("NoteListSidebar", () => {
 	const mockNotes: Note[] = [
@@ -155,8 +160,9 @@ describe("NoteListSidebar", () => {
 			/>,
 		);
 
-		const noteItems = container.querySelectorAll('[role="button"]');
-		const selectedNoteItem = noteItems[0] as HTMLElement;
+		const noteItems = container.querySelectorAll("button");
+		// Skip the first button which is the "add note" button
+		const selectedNoteItem = noteItems[1] as HTMLElement;
 
 		// Happy DOM returns hex colors, not rgb
 		expect(selectedNoteItem.style.backgroundColor).toBe("#e7f3ff");

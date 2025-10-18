@@ -6,7 +6,6 @@ import type { Note } from "@app/common";
 import type { ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { BuildInfo } from "./components/BuildInfo.js";
 import { Layout } from "./components/Layout.js";
 import { NoteEditor } from "./components/NoteEditor.js";
 import { NoteListSidebar } from "./components/NoteListSidebar.js";
@@ -73,25 +72,22 @@ export function App(): ReactElement {
 	const selectedNote = notes.find((note) => note.id === selectedNoteId) || null;
 
 	return (
-		<>
-			<Layout
-				sidebar={
-					<NoteListSidebar
-						notes={notes}
-						selectedNoteId={selectedNoteId}
-						onSelectNote={handleSelectNote}
-						onAddNote={handleAddNote}
-					/>
-				}
-				main={
-					<NoteEditor
-						note={selectedNote}
-						onUpdate={handleUpdateNote}
-						onDelete={handleDeleteNote}
-					/>
-				}
-			/>
-			<BuildInfo />
-		</>
+		<Layout
+			sidebar={
+				<NoteListSidebar
+					notes={notes}
+					selectedNoteId={selectedNoteId}
+					onSelectNote={handleSelectNote}
+					onAddNote={handleAddNote}
+				/>
+			}
+			main={
+				<NoteEditor
+					note={selectedNote}
+					onUpdate={handleUpdateNote}
+					onDelete={handleDeleteNote}
+				/>
+			}
+		/>
 	);
 }

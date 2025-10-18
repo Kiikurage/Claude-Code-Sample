@@ -9,7 +9,7 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "bun test",
-		"lint": "biome check . --fix",
+		"lint": "biome check ./src --fix",
 		"check": "tsc --noEmit",
 		"clean": "rm -rf dist"
 	},

@@ -5,6 +5,7 @@
 
 import type { Note } from "@app/common";
 import type { ReactElement } from "react";
+import { BuildInfo } from "./BuildInfo.js";
 
 interface NoteListSidebarProps {
 	notes: Note[];
@@ -86,23 +87,20 @@ export function NoteListSidebar({
 				) : (
 					<div>
 						{notes.map((note) => (
-							<div
+							<button
+								type="button"
 								key={note.id}
 								onClick={() => onSelectNote(note.id)}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ") {
-										onSelectNote(note.id);
-									}
-								}}
-								role="button"
-								tabIndex={0}
 								style={{
+									width: "100%",
 									padding: "12px 16px",
+									border: "none",
 									borderBottom: "1px solid #ddd",
 									cursor: "pointer",
 									backgroundColor:
 										selectedNoteId === note.id ? "#e7f3ff" : "transparent",
 									transition: "background-color 0.2s",
+									textAlign: "left",
 								}}
 								onMouseOver={(e) => {
 									if (selectedNoteId !== note.id) {
@@ -110,6 +108,16 @@ export function NoteListSidebar({
 									}
 								}}
 								onMouseOut={(e) => {
+									if (selectedNoteId !== note.id) {
+										e.currentTarget.style.backgroundColor = "transparent";
+									}
+								}}
+								onFocus={(e) => {
+									if (selectedNoteId !== note.id) {
+										e.currentTarget.style.backgroundColor = "#f0f0f0";
+									}
+								}}
+								onBlur={(e) => {
 									if (selectedNoteId !== note.id) {
 										e.currentTarget.style.backgroundColor = "transparent";
 									}
@@ -135,11 +143,12 @@ export function NoteListSidebar({
 								>
 									{note.createdAt.toLocaleDateString("ja-JP")}
 								</div>
-							</div>
+							</button>
 						))}
 					</div>
 				)}
 			</div>
+			<BuildInfo />
 		</div>
 	);
 }

@@ -14,9 +14,11 @@ export function Layout({ sidebar, main }: LayoutProps): ReactElement {
 	return (
 		<div
 			style={{
+				position: "fixed",
+				inset: 0,
 				display: "flex",
-				minHeight: "100vh",
 				flexDirection: "row",
+				overflow: "hidden",
 			}}
 		>
 			<aside
