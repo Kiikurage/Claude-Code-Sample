@@ -59,7 +59,7 @@ export function App(): ReactElement {
 	};
 
 	return (
-		<div style={{ minHeight: "100vh", backgroundColor: "#f5f5f5" }}>
+		<div style={{ minHeight: "100vh" }}>
 			<NoteList
 				notes={notes}
 				onUpdate={handleUpdateNote}
