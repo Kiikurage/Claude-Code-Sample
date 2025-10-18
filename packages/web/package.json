@@ -1,0 +1,36 @@
+{
+	"name": "@app/web",
+	"version": "1.0.0",
+	"description": "Web frontend application",
+	"type": "module",
+	"main": "./src/index.tsx",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"test": "bun test",
+		"lint": "biome check . --fix",
+		"check": "tsc --noEmit",
+		"clean": "rm -rf dist"
+	},
+	"dependencies": {
+		"@app/common": "workspace:*",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"uuid": "^13.0.0"
+	},
+	"devDependencies": {
+		"@happy-dom/global-registrator": "^20.0.5",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.0",
+		"@testing-library/user-event": "^14.6.1",
+		"@types/bun": "latest",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"@types/uuid": "^11.0.0",
+		"@vitejs/plugin-react": "^5.0.4",
+		"happy-dom": "^20.0.5",
+		"typescript": "^5.9.3",
+		"vite": "^7.1.10"
+	}
+}

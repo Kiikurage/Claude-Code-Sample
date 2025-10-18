@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"target": "ES2024",
+		"module": "NodeNext",
+		"strict": true,
+		"sourceMap": true,
+		"moduleResolution": "NodeNext",
+		"forceConsistentCasingInFileNames": true,
+		"lib": [],
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true
+	}
+}

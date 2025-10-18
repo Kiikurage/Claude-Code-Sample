@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+data/db/
+REQUIREMENTS.md
+WORK_PLAN.md
+full_scan_progress.json

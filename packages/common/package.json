@@ -1,0 +1,21 @@
+{
+	"name": "@app/common",
+	"version": "1.0.0",
+	"description": "Common utilities and types shared across the application",
+	"type": "module",
+	"main": "./src/index.ts",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"test": "bun test",
+		"lint": "biome check .",
+		"check": "biome check ."
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"dependencies": {
+		"zod": "^4.1.12"
+	}
+}
