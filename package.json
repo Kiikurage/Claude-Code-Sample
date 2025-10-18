@@ -8,7 +8,6 @@
 	"scripts": {
 		"dev": "bun run --filter='@app/*' dev",
 		"build": "bun run --filter='@app/*' build",
-		"prebuild": "bun run --filter='@app/*' prebuild",
 		"clean": "bun run --filter='@app/*' clean",
 		"lint": "bun run --filter='@app/*' lint",
 		"check": "bun run --filter='@app/*' check",
