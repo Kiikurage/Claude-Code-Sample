@@ -93,6 +93,19 @@ python3 .claude/skills/work_plan/work_plan.py list
     - READMEにAPI仕様を追加する
 ```
 
+### 5. 作業計画をクリア
+
+すべての作業項目を削除します（WORK_PLAN.mdファイルを削除します）。新しい作業を開始する前に既存の計画をクリアする際に使用します。
+
+```bash
+python3 .claude/skills/work_plan/work_plan.py clear
+```
+
+出力例：
+```
+Work plan cleared (WORK_PLAN.md deleted)
+```
+
 ## データ形式
 
 作業項目は `WORK_PLAN.md` にマークダウンのチェックリスト形式で保存されます。
@@ -201,3 +214,6 @@ python3 .claude/skills/work_plan/work_plan.py list
 
 ### `list`
 すべての作業項目を一覧表示します。完了状態も表示されます。
+
+### `clear`
+すべての作業項目を削除します（WORK_PLAN.mdファイルを削除します）。新しい作業計画を開始する際に使用します。
