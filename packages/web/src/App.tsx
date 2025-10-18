@@ -60,18 +60,6 @@ export function App(): ReactElement {
 
 	return (
 		<div style={{ minHeight: "100vh", backgroundColor: "#f5f5f5" }}>
-			<header
-				style={{
-					backgroundColor: "#fff",
-					borderBottom: "1px solid #ddd",
-					padding: "20px",
-					marginBottom: "20px",
-				}}
-			>
-				<h1 style={{ margin: 0, textAlign: "center", color: "#333" }}>
-					Note Application
-				</h1>
-			</header>
 			<NoteList
 				notes={notes}
 				onUpdate={handleUpdateNote}
