@@ -7,7 +7,9 @@ import type { ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { BuildInfo } from "./components/BuildInfo.js";
-import { NoteList } from "./components/NoteList.js";
+import { Layout } from "./components/Layout.js";
+import { NoteEditor } from "./components/NoteEditor.js";
+import { NoteListSidebar } from "./components/NoteListSidebar.js";
 
 export function App(): ReactElement {
 	const STORAGE_KEY = "notesData";
@@ -28,6 +30,8 @@ export function App(): ReactElement {
 		return [];
 	});
 
+	const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+
 	useEffect(() => {
 		try {
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
@@ -44,6 +48,7 @@ export function App(): ReactElement {
 			createdAt: new Date(),
 		};
 		setNotes((prevNotes) => [newNote, ...prevNotes]);
+		setSelectedNoteId(newNote.id);
 	};
 
 	const handleUpdateNote = (id: string, title: string, content: string) => {
@@ -56,17 +61,37 @@ export function App(): ReactElement {
 
 	const handleDeleteNote = (id: string) => {
 		setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+		if (selectedNoteId === id) {
+			setSelectedNoteId(null);
+		}
 	};
 
+	const handleSelectNote = (id: string) => {
+		setSelectedNoteId(id);
+	};
+
+	const selectedNote = notes.find((note) => note.id === selectedNoteId) || null;
+
 	return (
-		<div style={{ minHeight: "100vh" }}>
-			<NoteList
-				notes={notes}
-				onUpdate={handleUpdateNote}
-				onDelete={handleDeleteNote}
-				onAdd={handleAddNote}
+		<>
+			<Layout
+				sidebar={
+					<NoteListSidebar
+						notes={notes}
+						selectedNoteId={selectedNoteId}
+						onSelectNote={handleSelectNote}
+						onAddNote={handleAddNote}
+					/>
+				}
+				main={
+					<NoteEditor
+						note={selectedNote}
+						onUpdate={handleUpdateNote}
+						onDelete={handleDeleteNote}
+					/>
+				}
 			/>
 			<BuildInfo />
-		</div>
+		</>
 	);
 }
