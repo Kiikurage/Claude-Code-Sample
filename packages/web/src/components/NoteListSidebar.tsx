@@ -11,7 +11,7 @@ interface NoteListSidebarProps {
 	notes: Note[];
 	selectedNoteId: string | null;
 	selectedNoteIds: Set<string>;
-	onSelectNote: (id: string, ctrlKey: boolean) => void;
+	onSelectNote: (id: string, modifierKey: boolean) => void;
 	onAddNote: () => void;
 	onDeleteSelectedNotes: () => void;
 	onCancelSelection: () => void;
@@ -164,7 +164,7 @@ export function NoteListSidebar({
 								type="button"
 								key={note.id}
 								onClick={(e) => {
-									onSelectNote(note.id, e.ctrlKey);
+									onSelectNote(note.id, e.ctrlKey || e.metaKey);
 								}}
 								style={{
 									width: "100%",
@@ -188,7 +188,10 @@ export function NoteListSidebar({
 									}
 								}}
 								onMouseOut={(e) => {
-									if (selectedNoteId === note.id || selectedNoteIds.has(note.id)) {
+									if (
+										selectedNoteId === note.id ||
+										selectedNoteIds.has(note.id)
+									) {
 										e.currentTarget.style.backgroundColor = "#e7f3ff";
 									} else {
 										e.currentTarget.style.backgroundColor = "transparent";
@@ -203,7 +206,10 @@ export function NoteListSidebar({
 									}
 								}}
 								onBlur={(e) => {
-									if (selectedNoteId === note.id || selectedNoteIds.has(note.id)) {
+									if (
+										selectedNoteId === note.id ||
+										selectedNoteIds.has(note.id)
+									) {
 										e.currentTarget.style.backgroundColor = "#e7f3ff";
 									} else {
 										e.currentTarget.style.backgroundColor = "transparent";
