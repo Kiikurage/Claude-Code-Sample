@@ -37,8 +37,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -58,8 +57,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={[]}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -80,8 +78,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -111,8 +108,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={notesWithoutTitle}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -135,8 +131,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -162,8 +157,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -190,8 +184,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -218,8 +211,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set()}
+				selectedNoteIds={[]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -243,8 +235,7 @@ describe("NoteListSidebar", () => {
 		const { container } = render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId="1"
-				selectedNoteIds={new Set()}
+				selectedNoteIds={["1"]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -269,8 +260,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set(["1", "2"])}
+				selectedNoteIds={["1", "2"]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -296,8 +286,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set(["1", "2"])}
+				selectedNoteIds={["1", "2"]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -323,8 +312,7 @@ describe("NoteListSidebar", () => {
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set(["1", "2"])}
+				selectedNoteIds={["1", "2"]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -347,8 +335,7 @@ describe("NoteListSidebar", () => {
 		const { container } = render(
 			<NoteListSidebar
 				notes={mockNotes}
-				selectedNoteId={null}
-				selectedNoteIds={new Set(["1"])}
+				selectedNoteIds={["1"]}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}

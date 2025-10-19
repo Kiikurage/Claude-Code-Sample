@@ -9,8 +9,7 @@ import { BuildInfo } from "./BuildInfo.js";
 
 interface NoteListSidebarProps {
 	notes: Note[];
-	selectedNoteId: string | null;
-	selectedNoteIds: Set<string>;
+	selectedNoteIds: string[];
 	onSelectNote: (id: string, modifierKey: boolean) => void;
 	onAddNote: () => void;
 	onDeleteSelectedNotes: () => void;
@@ -19,7 +18,6 @@ interface NoteListSidebarProps {
 
 export function NoteListSidebar({
 	notes,
-	selectedNoteId,
 	selectedNoteIds,
 	onSelectNote,
 	onAddNote,
@@ -43,7 +41,7 @@ export function NoteListSidebar({
 				<h2 style={{ margin: "0 0 12px 0", fontSize: "18px" }}>
 					ノート一覧 ({notes.length}件)
 				</h2>
-				{selectedNoteIds.size >= 2 ? (
+				{selectedNoteIds.length >= 2 ? (
 					<div
 						style={{
 							display: "flex",
@@ -77,7 +75,7 @@ export function NoteListSidebar({
 								e.currentTarget.style.backgroundColor = "#dc3545";
 							}}
 						>
-							削除 ({selectedNoteIds.size}個)
+							削除 ({selectedNoteIds.length}個)
 						</button>
 						<button
 							type="button"
@@ -173,43 +171,31 @@ export function NoteListSidebar({
 									borderBottom: "1px solid #ddd",
 									cursor: "pointer",
 									backgroundColor:
-										selectedNoteId === note.id || selectedNoteIds.has(note.id)
+										selectedNoteIds.includes(note.id)
 											? "#e7f3ff"
 											: "transparent",
 									transition: "background-color 0.2s",
 									textAlign: "left",
 								}}
 								onMouseOver={(e) => {
-									if (
-										selectedNoteId !== note.id &&
-										!selectedNoteIds.has(note.id)
-									) {
+									if (!selectedNoteIds.includes(note.id)) {
 										e.currentTarget.style.backgroundColor = "#f0f0f0";
 									}
 								}}
 								onMouseOut={(e) => {
-									if (
-										selectedNoteId === note.id ||
-										selectedNoteIds.has(note.id)
-									) {
+									if (selectedNoteIds.includes(note.id)) {
 										e.currentTarget.style.backgroundColor = "#e7f3ff";
 									} else {
 										e.currentTarget.style.backgroundColor = "transparent";
 									}
 								}}
 								onFocus={(e) => {
-									if (
-										selectedNoteId !== note.id &&
-										!selectedNoteIds.has(note.id)
-									) {
+									if (!selectedNoteIds.includes(note.id)) {
 										e.currentTarget.style.backgroundColor = "#f0f0f0";
 									}
 								}}
 								onBlur={(e) => {
-									if (
-										selectedNoteId === note.id ||
-										selectedNoteIds.has(note.id)
-									) {
+									if (selectedNoteIds.includes(note.id)) {
 										e.currentTarget.style.backgroundColor = "#e7f3ff";
 									} else {
 										e.currentTarget.style.backgroundColor = "transparent";
@@ -219,9 +205,7 @@ export function NoteListSidebar({
 								<div
 									style={{
 										fontWeight:
-											selectedNoteId === note.id || selectedNoteIds.has(note.id)
-												? "bold"
-												: "normal",
+											selectedNoteIds.includes(note.id) ? "bold" : "normal",
 										marginBottom: "4px",
 										fontSize: "14px",
 										overflow: "hidden",
