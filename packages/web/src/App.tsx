@@ -29,10 +29,7 @@ export function App(): ReactElement {
 		return [];
 	});
 
-	const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-	const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(
-		new Set(),
-	);
+	const [selectedNoteIds, setSelectedNoteIds] = useState<string[]>([]);
 
 	useEffect(() => {
 		try {
@@ -50,8 +47,7 @@ export function App(): ReactElement {
 			createdAt: new Date(),
 		};
 		setNotes((prevNotes) => [newNote, ...prevNotes]);
-		setSelectedNoteId(newNote.id);
-		setSelectedNoteIds(new Set());
+		setSelectedNoteIds([newNote.id]);
 	};
 
 	const handleUpdateNote = (id: string, title: string, content: string) => {
@@ -64,57 +60,54 @@ export function App(): ReactElement {
 
 	const handleDeleteNote = (id: string) => {
 		setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
-		if (selectedNoteId === id) {
-			setSelectedNoteId(null);
-		}
+		setSelectedNoteIds((prev) => prev.filter((noteId) => noteId !== id));
 	};
 
 	const handleSelectNote = (id: string, modifierKey: boolean) => {
 		if (modifierKey) {
 			// Ctrl/Meta キーが押されている場合は複数選択
 			setSelectedNoteIds((prev) => {
-				const newSet = new Set(prev);
-				if (newSet.has(id)) {
-					newSet.delete(id);
+				if (prev.includes(id)) {
+					return prev.filter((noteId) => noteId !== id);
 				} else {
-					newSet.add(id);
+					return [...prev, id];
 				}
-				return newSet;
 			});
 		} else {
 			// Ctrl/Meta キーが押されていない場合は通常選択
-			setSelectedNoteIds(new Set());
-			setSelectedNoteId(id);
+			setSelectedNoteIds([id]);
 		}
 	};
 
 	const handleDeleteSelectedNotes = () => {
-		if (selectedNoteIds.size === 0) return;
+		if (selectedNoteIds.length === 0) return;
 
 		const confirmed = window.confirm(
-			`${selectedNoteIds.size}個のノートを削除しますか？`,
+			`${selectedNoteIds.length}個のノートを削除しますか？`,
 		);
 		if (!confirmed) return;
 
+		const selectedSet = new Set(selectedNoteIds);
 		setNotes((prevNotes) =>
-			prevNotes.filter((note) => !selectedNoteIds.has(note.id)),
+			prevNotes.filter((note) => !selectedSet.has(note.id)),
 		);
-		setSelectedNoteIds(new Set());
-		setSelectedNoteId(null);
+		setSelectedNoteIds([]);
 	};
 
 	const handleCancelSelection = () => {
-		setSelectedNoteIds(new Set());
+		setSelectedNoteIds([]);
 	};
 
-	const selectedNote = notes.find((note) => note.id === selectedNoteId) || null;
+	const selectedNote =
+		selectedNoteIds.length > 0
+			? notes.find((note) => note.id === selectedNoteIds[0]) || null
+			: null;
 
 	return (
 		<Layout
 			sidebar={
 				<NoteListSidebar
 					notes={notes}
-					selectedNoteId={selectedNoteId}
 					selectedNoteIds={selectedNoteIds}
 					onSelectNote={handleSelectNote}
 					onAddNote={handleAddNote}
