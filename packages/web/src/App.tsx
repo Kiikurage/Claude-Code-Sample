@@ -51,6 +51,7 @@ export function App(): ReactElement {
 		};
 		setNotes((prevNotes) => [newNote, ...prevNotes]);
 		setSelectedNoteId(newNote.id);
+		setSelectedNoteIds(new Set());
 	};
 
 	const handleUpdateNote = (id: string, title: string, content: string) => {
