@@ -23,7 +23,7 @@ describe("NoteEditor", () => {
 			<NoteEditor note={null} onUpdate={mockUpdate} onDelete={mockDelete} />,
 		);
 
-		expect(screen.getByText("ノートを選択してください")).toBeTruthy();
+		expect(screen.getByText("ノートを選択してね")).toBeTruthy();
 	});
 
 	test("should display note title and content", () => {

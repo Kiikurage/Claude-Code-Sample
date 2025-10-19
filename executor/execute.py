@@ -127,6 +127,7 @@ def execute_with_claude(logger: SimpleLogger, prompt: str) -> int:
                 "claude",
                 "-p", prompt,
                 "--output-format", "text",
+                "--verbose",
                 "--allowedTools", "Read,Grep,WebSearch",
                 "--permission-mode", "acceptEdits"
             ],
