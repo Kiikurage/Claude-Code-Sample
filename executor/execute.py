@@ -267,16 +267,18 @@ def main() -> None:
             # ロガーをセットアップ
             logger = SimpleLogger(str(log_file_path), dummy_dir_seed=str(log_dir))
 
-            logger.info("✓ Claude Codeで実行開始")
-            print(f"✓ Claude Codeで実行開始")
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logger.info(f"[{timestamp}] ✓ Claude Codeで実行開始")
+            print(f"[{timestamp}] ✓ Claude Codeで実行開始")
 
             # Claude Codeで実行（リアルタイムでログに出力）
             start_time = time.time()
             exit_code = execute_with_claude(logger, output)
             duration = time.time() - start_time
 
-            logger.info("✓ Claude Codeで実行完了")
-            print(f"✓ Claude Codeで実行完了")
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logger.info(f"[{timestamp}] ✓ Claude Codeで実行完了")
+            print(f"[{timestamp}] ✓ Claude Codeで実行完了")
 
             # サマリーをログに記録
             log_summary(logger, issue_number, exit_code, duration)
