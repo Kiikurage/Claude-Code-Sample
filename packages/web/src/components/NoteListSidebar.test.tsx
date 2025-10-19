@@ -150,10 +150,10 @@ describe("NoteListSidebar", () => {
 		expect(addNoteCalled).toBe(true);
 	});
 
-	test("should call onSelectNote when note item is clicked without ctrl key", () => {
-		const selectCalls: Array<{ id: string; ctrlKey: boolean }> = [];
-		const mockSelectNote = (id: string, ctrlKey: boolean) => {
-			selectCalls.push({ id, ctrlKey });
+	test("should call onSelectNote when note item is clicked without modifier key", () => {
+		const selectCalls: Array<{ id: string; modifierKey: boolean }> = [];
+		const mockSelectNote = (id: string, modifierKey: boolean) => {
+			selectCalls.push({ id, modifierKey });
 		};
 		const mockAddNote = () => {};
 		const mockDeleteSelectedNotes = () => {};
@@ -172,16 +172,16 @@ describe("NoteListSidebar", () => {
 		);
 
 		const noteItem = screen.getByText("Test Note 1");
-		fireEvent.click(noteItem, { ctrlKey: false });
+		fireEvent.click(noteItem, { ctrlKey: false, metaKey: false });
 
 		expect(selectCalls.length).toBe(1);
-		expect(selectCalls[0]).toEqual({ id: "1", ctrlKey: false });
+		expect(selectCalls[0]).toEqual({ id: "1", modifierKey: false });
 	});
 
-	test("should call onSelectNote with ctrlKey when note item is clicked with ctrl", () => {
-		const selectCalls: Array<{ id: string; ctrlKey: boolean }> = [];
-		const mockSelectNote = (id: string, ctrlKey: boolean) => {
-			selectCalls.push({ id, ctrlKey });
+	test("should call onSelectNote with modifierKey when note item is clicked with ctrl", () => {
+		const selectCalls: Array<{ id: string; modifierKey: boolean }> = [];
+		const mockSelectNote = (id: string, modifierKey: boolean) => {
+			selectCalls.push({ id, modifierKey });
 		};
 		const mockAddNote = () => {};
 		const mockDeleteSelectedNotes = () => {};
@@ -203,7 +203,35 @@ describe("NoteListSidebar", () => {
 		fireEvent.click(noteItem, { ctrlKey: true });
 
 		expect(selectCalls.length).toBe(1);
-		expect(selectCalls[0]).toEqual({ id: "1", ctrlKey: true });
+		expect(selectCalls[0]).toEqual({ id: "1", modifierKey: true });
+	});
+
+	test("should call onSelectNote with modifierKey when note item is clicked with meta key (Mac)", () => {
+		const selectCalls: Array<{ id: string; modifierKey: boolean }> = [];
+		const mockSelectNote = (id: string, modifierKey: boolean) => {
+			selectCalls.push({ id, modifierKey });
+		};
+		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
+
+		render(
+			<NoteListSidebar
+				notes={mockNotes}
+				selectedNoteId={null}
+				selectedNoteIds={new Set()}
+				onSelectNote={mockSelectNote}
+				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
+			/>,
+		);
+
+		const noteItem = screen.getByText("Test Note 1");
+		fireEvent.click(noteItem, { metaKey: true });
+
+		expect(selectCalls.length).toBe(1);
+		expect(selectCalls[0]).toEqual({ id: "1", modifierKey: true });
 	});
 
 	test("should highlight selected note", () => {

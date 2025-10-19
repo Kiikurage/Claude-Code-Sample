@@ -68,9 +68,9 @@ export function App(): ReactElement {
 		}
 	};
 
-	const handleSelectNote = (id: string, ctrlKey: boolean) => {
-		if (ctrlKey) {
-			// Ctrl キーが押されている場合は複数選択
+	const handleSelectNote = (id: string, modifierKey: boolean) => {
+		if (modifierKey) {
+			// Ctrl/Meta キーが押されている場合は複数選択
 			setSelectedNoteIds((prev) => {
 				const newSet = new Set(prev);
 				if (newSet.has(id)) {
@@ -81,7 +81,7 @@ export function App(): ReactElement {
 				return newSet;
 			});
 		} else {
-			// Ctrl キーが押されていない場合は通常選択
+			// Ctrl/Meta キーが押されていない場合は通常選択
 			setSelectedNoteIds(new Set());
 			setSelectedNoteId(id);
 		}
