@@ -124,6 +124,7 @@ export function App(): ReactElement {
 			}
 			main={
 				<NoteEditor
+					key={selectedNote?.id}
 					note={selectedNote}
 					onUpdate={handleUpdateNote}
 					onDelete={handleDeleteNote}

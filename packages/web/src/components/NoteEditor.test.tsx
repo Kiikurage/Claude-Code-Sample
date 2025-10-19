@@ -236,4 +236,104 @@ describe("NoteEditor", () => {
 
 		expect(contentTextarea.value).toBe("Updated Content");
 	});
+
+	test("should immediately display preview content when switching notes", async () => {
+		const mockUpdate = () => {};
+		const mockDelete = () => {};
+
+		const note1: Note = {
+			id: "1",
+			title: "Note 1",
+			content: "Content 1",
+			createdAt: new Date("2024-01-01T12:00:00"),
+		};
+
+		const note2: Note = {
+			id: "2",
+			title: "Note 2",
+			content: "Content 2",
+			createdAt: new Date("2024-01-02T12:00:00"),
+		};
+
+		const { rerender } = render(
+			<NoteEditor
+				key={note1.id}
+				note={note1}
+				onUpdate={mockUpdate}
+				onDelete={mockDelete}
+			/>,
+		);
+
+		// Verify initial content is displayed
+		const contentTextarea = screen.getByPlaceholderText(
+			"内容を入力してください。Markdownに対応しています。",
+		) as HTMLTextAreaElement;
+		expect(contentTextarea.value).toBe("Content 1");
+
+		// Switch to note 2 - should immediately show new content
+		rerender(
+			<NoteEditor
+				key={note2.id}
+				note={note2}
+				onUpdate={mockUpdate}
+				onDelete={mockDelete}
+			/>,
+		);
+
+		// Verify that note 2 content is displayed immediately
+		const updatedTextarea = screen.getByPlaceholderText(
+			"内容を入力してください。Markdownに対応しています。",
+		) as HTMLTextAreaElement;
+		expect(updatedTextarea.value).toBe("Content 2");
+	});
+
+	test("should clear previous note preview when switching notes", () => {
+		const mockUpdate = () => {};
+		const mockDelete = () => {};
+
+		const note1: Note = {
+			id: "1",
+			title: "Note 1",
+			content: "Content 1",
+			createdAt: new Date("2024-01-01T12:00:00"),
+		};
+
+		const note2: Note = {
+			id: "2",
+			title: "Note 2",
+			content: "Content 2",
+			createdAt: new Date("2024-01-02T12:00:00"),
+		};
+
+		const { rerender } = render(
+			<NoteEditor
+				key={note1.id}
+				note={note1}
+				onUpdate={mockUpdate}
+				onDelete={mockDelete}
+			/>,
+		);
+
+		// Verify initial title is displayed
+		const titleInput = screen.getByPlaceholderText(
+			"タイトルを入力してください",
+		) as HTMLInputElement;
+		expect(titleInput.value).toBe("Note 1");
+
+		// Switch to note 2
+		rerender(
+			<NoteEditor
+				key={note2.id}
+				note={note2}
+				onUpdate={mockUpdate}
+				onDelete={mockDelete}
+			/>,
+		);
+
+		// Verify title changed to note 2 (indicating component remounted)
+		const updatedTitleInput = screen.getByPlaceholderText(
+			"タイトルを入力してください",
+		) as HTMLInputElement;
+		expect(updatedTitleInput.value).toBe("Note 2");
+	});
 });
