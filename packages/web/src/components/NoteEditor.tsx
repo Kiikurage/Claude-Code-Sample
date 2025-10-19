@@ -135,8 +135,10 @@ export function NoteEditor({
 						fontWeight: "bold",
 						marginBottom: "16px",
 						border: "none",
+						borderBottom: "1px solid #e9ecef",
 						outline: "none",
 						padding: "0",
+						paddingBottom: "16px",
 						backgroundColor: "transparent",
 						fontFamily: "inherit",
 						color: "#212529",
@@ -149,7 +151,6 @@ export function NoteEditor({
 						gridTemplateColumns: "1fr 1fr",
 						gap: "0",
 						overflow: "hidden",
-						borderLeft: "1px solid #e9ecef",
 					}}
 				>
 					<textarea
@@ -161,6 +162,7 @@ export function NoteEditor({
 							padding: "12px",
 							fontSize: "14px",
 							border: "none",
+							borderRight: "1px solid #e9ecef",
 							borderRadius: "0",
 							resize: "none",
 							boxSizing: "border-box",
