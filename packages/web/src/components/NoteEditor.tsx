@@ -29,7 +29,7 @@ export function NoteEditor({
 					fontSize: "16px",
 				}}
 			>
-				ノートを選択してください
+				ノートを選択してね
 			</div>
 		);
 	}
