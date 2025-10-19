@@ -20,11 +20,15 @@ describe("MarkdownPreview", () => {
 	});
 
 	it("renders headers correctly", () => {
-		const { container: container1 } = render(<MarkdownPreview content="# Header 1" />);
+		const { container: container1 } = render(
+			<MarkdownPreview content="# Header 1" />,
+		);
 		const html1 = container1.querySelector(".markdown-preview")?.innerHTML;
 		expect(html1).toContain("<h1>Header 1</h1>");
 
-		const { container: container2 } = render(<MarkdownPreview content="## Header 2" />);
+		const { container: container2 } = render(
+			<MarkdownPreview content="## Header 2" />,
+		);
 		const html2 = container2.querySelector(".markdown-preview")?.innerHTML;
 		expect(html2).toContain("<h2>Header 2</h2>");
 	});
@@ -39,9 +43,7 @@ describe("MarkdownPreview", () => {
 
 	it("renders lists correctly", () => {
 		const { container } = render(
-			<MarkdownPreview
-				content="- item 1&#10;- item 2&#10;- item 3"
-			/>,
+			<MarkdownPreview content="- item 1&#10;- item 2&#10;- item 3" />,
 		);
 		const html = container.querySelector(".markdown-preview")?.innerHTML;
 		expect(html).toContain("<li>item 1");
