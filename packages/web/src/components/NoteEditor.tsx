@@ -19,9 +19,18 @@ export function NoteEditor({
 	onUpdate,
 	onDelete,
 }: NoteEditorProps): ReactElement {
-	const [previewContent, setPreviewContent] = useState("");
+	// Initialize with note content for immediate rendering on first load
+	const [previewContent, setPreviewContent] = useState(() => note?.content ?? "");
 
-	// Debounce preview updates to avoid performance issues
+	// Debounce preview updates to avoid performance issues (but skip initial render)
+	useEffect(() => {
+		if (!note) return;
+
+		// Update preview immediately
+		setPreviewContent(note.content);
+	}, [note?.id]);
+
+	// Debounce subsequent content changes
 	useEffect(() => {
 		if (!note) return;
 
@@ -30,7 +39,7 @@ export function NoteEditor({
 		}, 1000);
 
 		return () => clearTimeout(timer);
-	}, [note]);
+	}, [note?.content]);
 
 	if (!note) {
 		return (
