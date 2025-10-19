@@ -31,13 +31,18 @@ describe("NoteListSidebar", () => {
 	test("should display note count", () => {
 		const mockSelectNote = () => {};
 		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
 
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
 				selectedNoteId={null}
+				selectedNoteIds={new Set()}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
 			/>,
 		);
 
@@ -47,13 +52,18 @@ describe("NoteListSidebar", () => {
 	test("should display empty message when no notes", () => {
 		const mockSelectNote = () => {};
 		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
 
 		render(
 			<NoteListSidebar
 				notes={[]}
 				selectedNoteId={null}
+				selectedNoteIds={new Set()}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
 			/>,
 		);
 
@@ -64,13 +74,18 @@ describe("NoteListSidebar", () => {
 	test("should display note titles", () => {
 		const mockSelectNote = () => {};
 		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
 
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
 				selectedNoteId={null}
+				selectedNoteIds={new Set()}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
 			/>,
 		);
 
@@ -90,13 +105,18 @@ describe("NoteListSidebar", () => {
 
 		const mockSelectNote = () => {};
 		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
 
 		render(
 			<NoteListSidebar
 				notes={notesWithoutTitle}
 				selectedNoteId={null}
+				selectedNoteIds={new Set()}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
 			/>,
 		);
 
@@ -109,13 +129,18 @@ describe("NoteListSidebar", () => {
 		const mockAddNote = () => {
 			addNoteCalled = true;
 		};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
 
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
 				selectedNoteId={null}
+				selectedNoteIds={new Set()}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
 			/>,
 		);
 
@@ -125,38 +150,77 @@ describe("NoteListSidebar", () => {
 		expect(addNoteCalled).toBe(true);
 	});
 
-	test("should call onSelectNote when note item is clicked", () => {
-		let selectedId = "";
-		const mockSelectNote = (id: string) => {
-			selectedId = id;
+	test("should call onSelectNote when note item is clicked without ctrl key", () => {
+		const selectCalls: Array<{ id: string; ctrlKey: boolean }> = [];
+		const mockSelectNote = (id: string, ctrlKey: boolean) => {
+			selectCalls.push({ id, ctrlKey });
 		};
 		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
 
 		render(
 			<NoteListSidebar
 				notes={mockNotes}
 				selectedNoteId={null}
+				selectedNoteIds={new Set()}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
 			/>,
 		);
 
 		const noteItem = screen.getByText("Test Note 1");
-		fireEvent.click(noteItem);
+		fireEvent.click(noteItem, { ctrlKey: false });
 
-		expect(selectedId).toBe("1");
+		expect(selectCalls.length).toBe(1);
+		expect(selectCalls[0]).toEqual({ id: "1", ctrlKey: false });
+	});
+
+	test("should call onSelectNote with ctrlKey when note item is clicked with ctrl", () => {
+		const selectCalls: Array<{ id: string; ctrlKey: boolean }> = [];
+		const mockSelectNote = (id: string, ctrlKey: boolean) => {
+			selectCalls.push({ id, ctrlKey });
+		};
+		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
+
+		render(
+			<NoteListSidebar
+				notes={mockNotes}
+				selectedNoteId={null}
+				selectedNoteIds={new Set()}
+				onSelectNote={mockSelectNote}
+				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
+			/>,
+		);
+
+		const noteItem = screen.getByText("Test Note 1");
+		fireEvent.click(noteItem, { ctrlKey: true });
+
+		expect(selectCalls.length).toBe(1);
+		expect(selectCalls[0]).toEqual({ id: "1", ctrlKey: true });
 	});
 
 	test("should highlight selected note", () => {
 		const mockSelectNote = () => {};
 		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
 
 		const { container } = render(
 			<NoteListSidebar
 				notes={mockNotes}
 				selectedNoteId="1"
+				selectedNoteIds={new Set()}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
 			/>,
 		);
 
@@ -165,6 +229,110 @@ describe("NoteListSidebar", () => {
 		const selectedNoteItem = noteItems[1] as HTMLElement;
 
 		// Happy DOM returns hex colors, not rgb
+		expect(selectedNoteItem.style.backgroundColor).toBe("#e7f3ff");
+	});
+
+	test("should display delete button when notes are selected", () => {
+		const mockSelectNote = () => {};
+		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
+
+		render(
+			<NoteListSidebar
+				notes={mockNotes}
+				selectedNoteId={null}
+				selectedNoteIds={new Set(["1", "2"])}
+				onSelectNote={mockSelectNote}
+				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
+			/>,
+		);
+
+		expect(screen.getByText("削除 (2個)")).toBeTruthy();
+		expect(screen.getByText("✕")).toBeTruthy();
+		// The add button should not be visible
+		expect(screen.queryByText("+ 新規ノート作成")).toBeFalsy();
+	});
+
+	test("should call onDeleteSelectedNotes when delete button is clicked", () => {
+		let deleteNoteCalled = false;
+		const mockSelectNote = () => {};
+		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {
+			deleteNoteCalled = true;
+		};
+		const mockCancelSelection = () => {};
+
+		render(
+			<NoteListSidebar
+				notes={mockNotes}
+				selectedNoteId={null}
+				selectedNoteIds={new Set(["1", "2"])}
+				onSelectNote={mockSelectNote}
+				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
+			/>,
+		);
+
+		const deleteButton = screen.getByText("削除 (2個)");
+		fireEvent.click(deleteButton);
+
+		expect(deleteNoteCalled).toBe(true);
+	});
+
+	test("should call onCancelSelection when cancel button is clicked", () => {
+		let cancelSelectionCalled = false;
+		const mockSelectNote = () => {};
+		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {
+			cancelSelectionCalled = true;
+		};
+
+		render(
+			<NoteListSidebar
+				notes={mockNotes}
+				selectedNoteId={null}
+				selectedNoteIds={new Set(["1", "2"])}
+				onSelectNote={mockSelectNote}
+				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
+			/>,
+		);
+
+		const cancelButton = screen.getByText("✕");
+		fireEvent.click(cancelButton);
+
+		expect(cancelSelectionCalled).toBe(true);
+	});
+
+	test("should highlight multiple selected notes with blue background", () => {
+		const mockSelectNote = () => {};
+		const mockAddNote = () => {};
+		const mockDeleteSelectedNotes = () => {};
+		const mockCancelSelection = () => {};
+
+		const { container } = render(
+			<NoteListSidebar
+				notes={mockNotes}
+				selectedNoteId={null}
+				selectedNoteIds={new Set(["1"])}
+				onSelectNote={mockSelectNote}
+				onAddNote={mockAddNote}
+				onDeleteSelectedNotes={mockDeleteSelectedNotes}
+				onCancelSelection={mockCancelSelection}
+			/>,
+		);
+
+		const noteItems = container.querySelectorAll("button");
+		// Skip the first button which is not a note item
+		const selectedNoteItem = noteItems[1] as HTMLElement;
+
+		// Happy DOM returns hex colors
 		expect(selectedNoteItem.style.backgroundColor).toBe("#e7f3ff");
 	});
 });
