@@ -60,7 +60,7 @@ export function NoteEditor({
 				height: "100%",
 				display: "flex",
 				flexDirection: "column",
-				padding: "20px",
+				padding: "0",
 			}}
 		>
 			<div
@@ -68,7 +68,9 @@ export function NoteEditor({
 					display: "flex",
 					justifyContent: "space-between",
 					alignItems: "center",
-					marginBottom: "20px",
+					padding: "16px 20px",
+					borderBottom: "1px solid #e9ecef",
+					backgroundColor: "#f8f9fa",
 				}}
 			>
 				<div style={{ fontSize: "12px", color: "#6c757d" }}>
@@ -139,18 +141,15 @@ export function NoteEditor({
 					</button>
 				</div>
 			</div>
-			<div style={{ marginBottom: "16px" }}>
-				<label
-					htmlFor={`note-title-${note.id}`}
-					style={{
-						display: "block",
-						marginBottom: "8px",
-						fontWeight: "bold",
-						fontSize: "14px",
-					}}
-				>
-					タイトル:
-				</label>
+			<div
+				style={{
+					flex: 1,
+					display: "flex",
+					flexDirection: "column",
+					padding: "20px",
+					overflow: "hidden",
+				}}
+			>
 				<input
 					id={`note-title-${note.id}`}
 					type="text"
@@ -158,27 +157,17 @@ export function NoteEditor({
 					onChange={handleTitleChange}
 					placeholder="タイトルを入力してください"
 					style={{
-						width: "100%",
-						padding: "12px",
-						fontSize: "16px",
-						border: "1px solid #ccc",
-						borderRadius: "4px",
-						boxSizing: "border-box",
+						fontSize: "28px",
+						fontWeight: "bold",
+						marginBottom: "16px",
+						border: "none",
+						outline: "none",
+						padding: "0",
+						backgroundColor: "transparent",
+						fontFamily: "inherit",
+						color: "#212529",
 					}}
 				/>
-			</div>
-			<div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-				<label
-					htmlFor={`note-content-${note.id}`}
-					style={{
-						display: "block",
-						marginBottom: "8px",
-						fontWeight: "bold",
-						fontSize: "14px",
-					}}
-				>
-					{showPreview ? "プレビュー:" : "内容:"}
-				</label>
 				{showPreview ? (
 					<MarkdownPreview content={note.content} />
 				) : (
@@ -189,13 +178,15 @@ export function NoteEditor({
 						placeholder="内容を入力してください。Markdownに対応しています。"
 						style={{
 							flex: 1,
-							padding: "12px",
+							padding: "0",
 							fontSize: "14px",
-							border: "1px solid #ccc",
-							borderRadius: "4px",
+							border: "none",
+							outline: "none",
 							resize: "none",
 							boxSizing: "border-box",
 							fontFamily: "inherit",
+							backgroundColor: "transparent",
+							color: "#212529",
 						}}
 					/>
 				)}
