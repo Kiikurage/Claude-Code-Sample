@@ -242,7 +242,7 @@ describe("NoteListSidebar", () => {
 			<NoteListSidebar
 				notes={mockNotes}
 				selectedNoteId={null}
-				selectedNoteIds={new Set(["1"])}
+				selectedNoteIds={new Set(["1", "2"])}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -250,7 +250,7 @@ describe("NoteListSidebar", () => {
 			/>,
 		);
 
-		expect(screen.getByText("削除 (1個)")).toBeTruthy();
+		expect(screen.getByText("削除 (2個)")).toBeTruthy();
 		expect(screen.getByText("✕")).toBeTruthy();
 		// The add button should not be visible
 		expect(screen.queryByText("+ 新規ノート作成")).toBeFalsy();
@@ -296,7 +296,7 @@ describe("NoteListSidebar", () => {
 			<NoteListSidebar
 				notes={mockNotes}
 				selectedNoteId={null}
-				selectedNoteIds={new Set(["1"])}
+				selectedNoteIds={new Set(["1", "2"])}
 				onSelectNote={mockSelectNote}
 				onAddNote={mockAddNote}
 				onDeleteSelectedNotes={mockDeleteSelectedNotes}
@@ -310,7 +310,7 @@ describe("NoteListSidebar", () => {
 		expect(cancelSelectionCalled).toBe(true);
 	});
 
-	test("should highlight multiple selected notes with yellow background", () => {
+	test("should highlight multiple selected notes with blue background", () => {
 		const mockSelectNote = () => {};
 		const mockAddNote = () => {};
 		const mockDeleteSelectedNotes = () => {};
@@ -333,6 +333,6 @@ describe("NoteListSidebar", () => {
 		const selectedNoteItem = noteItems[1] as HTMLElement;
 
 		// Happy DOM returns hex colors
-		expect(selectedNoteItem.style.backgroundColor).toBe("#fff3cd");
+		expect(selectedNoteItem.style.backgroundColor).toBe("#e7f3ff");
 	});
 });

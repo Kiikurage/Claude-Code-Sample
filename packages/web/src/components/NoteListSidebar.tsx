@@ -43,7 +43,7 @@ export function NoteListSidebar({
 				<h2 style={{ margin: "0 0 12px 0", fontSize: "18px" }}>
 					ノート一覧 ({notes.length}件)
 				</h2>
-				{selectedNoteIds.size > 0 ? (
+				{selectedNoteIds.size >= 2 ? (
 					<div
 						style={{
 							display: "flex",
@@ -172,9 +172,8 @@ export function NoteListSidebar({
 									border: "none",
 									borderBottom: "1px solid #ddd",
 									cursor: "pointer",
-									backgroundColor: selectedNoteIds.has(note.id)
-										? "#fff3cd"
-										: selectedNoteId === note.id
+									backgroundColor:
+										selectedNoteId === note.id || selectedNoteIds.has(note.id)
 											? "#e7f3ff"
 											: "transparent",
 									transition: "background-color 0.2s",
@@ -189,9 +188,7 @@ export function NoteListSidebar({
 									}
 								}}
 								onMouseOut={(e) => {
-									if (selectedNoteIds.has(note.id)) {
-										e.currentTarget.style.backgroundColor = "#fff3cd";
-									} else if (selectedNoteId === note.id) {
+									if (selectedNoteId === note.id || selectedNoteIds.has(note.id)) {
 										e.currentTarget.style.backgroundColor = "#e7f3ff";
 									} else {
 										e.currentTarget.style.backgroundColor = "transparent";
@@ -206,9 +203,7 @@ export function NoteListSidebar({
 									}
 								}}
 								onBlur={(e) => {
-									if (selectedNoteIds.has(note.id)) {
-										e.currentTarget.style.backgroundColor = "#fff3cd";
-									} else if (selectedNoteId === note.id) {
+									if (selectedNoteId === note.id || selectedNoteIds.has(note.id)) {
 										e.currentTarget.style.backgroundColor = "#e7f3ff";
 									} else {
 										e.currentTarget.style.backgroundColor = "transparent";
