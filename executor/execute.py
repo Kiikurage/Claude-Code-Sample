@@ -11,11 +11,18 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from github import get_git_remote_info, get_issue_details, post_issue_comment, fetch_tickets
+from github import (
+    get_git_remote_info,
+    get_issue_details,
+    post_issue_comment,
+    fetch_tickets,
+    get_pr_by_branch_name,
+    get_pr_comments,
+)
 from logger import SimpleLogger
 
 
-# プロンプトテンプレート
+# プロンプトテンプレート（PR未作成の場合）
 PROMPT_TEMPLATE = """# チケット #{issue_number}: {issue_title}
 
 ## 概要
@@ -45,28 +52,92 @@ PROMPT_TEMPLATE = """# チケット #{issue_number}: {issue_title}
 
 コードの品質に注意し、プロジェクトの標準に従ってください。"""
 
+# プロンプトテンプレート（PR既存の場合）
+PROMPT_TEMPLATE_WITH_PR = """# チケット #{issue_number}: {issue_title}
 
-def render_prompt(issue_details: dict) -> str:
+## 概要
+{issue_body}
+
+## メタデータ
+- **ステータス**: {issue_state}
+- **作成者**: {issue_author}
+- **ラベル**: {issue_labels}
+- **作成日**: {issue_created_at}
+- **更新日**: {issue_updated_at}
+
+## 注記：既存のプルリクエスト
+**重要**: このチケットに対応するプルリクエストがすでに存在します。
+- PR #{pr_number}: {pr_title}
+- URL: {pr_url}
+
+以下のコメントで追加の変更を求められているようなので対応してください。
+
+{pr_comments_section}## 実行内容
+以下のタスクを実行してください：
+
+1. `feature/{issue_number}` ブランチに移動する。
+2. 上記のコメントに対応するように実装を修正する。
+3. 変更をコミットしてプッシュする。
+4. masterブランチへ戻る。
+
+**注意**: すでにプルリクエストが作成されているため、新たなプルリクエストは作成しないでください。既存PRに新しいコミットを追加します。
+
+コードの品質に注意し、プロジェクトの標準に従ってください。"""
+
+
+def render_prompt(
+    issue_details: dict, pr_info: dict = None, pr_comments: list = None
+) -> str:
     """チケット情報をプロンプトテンプレートに補完
 
     Args:
         issue_details: get_issue_detailsの返り値
+        pr_info: ブランチに対応するPR情報（オプション）
+        pr_comments: PRのコメント情報リスト（オプション）
 
     Returns:
         レンダリング済みプロンプト
     """
     labels = ", ".join(issue_details.get("labels", [])) or "なし"
 
-    return PROMPT_TEMPLATE.format(
-        issue_number=issue_details.get("number"),
-        issue_title=issue_details.get("title"),
-        issue_body=issue_details.get("body") or "説明なし",
-        issue_state=issue_details.get("state"),
-        issue_author=issue_details.get("author", "unknown"),
-        issue_labels=labels,
-        issue_created_at=issue_details.get("created_at", "unknown"),
-        issue_updated_at=issue_details.get("updated_at", "unknown"),
-    )
+    # PR情報がある場合と無い場合で異なるテンプレートを使用
+    if pr_info:
+        # 既存PRがある場合
+        pr_comments_section = ""
+        if pr_comments:
+            pr_comments_section = "## PR に寄せられたコメント\n"
+            for comment in pr_comments:
+                pr_comments_section += (
+                    f"**{comment.get('author', 'unknown')}**: {comment.get('body', '')}\n\n"
+                )
+            pr_comments_section += "\n"
+
+        return PROMPT_TEMPLATE_WITH_PR.format(
+            issue_number=issue_details.get("number"),
+            issue_title=issue_details.get("title"),
+            issue_body=issue_details.get("body") or "説明なし",
+            issue_state=issue_details.get("state"),
+            issue_author=issue_details.get("author", "unknown"),
+            issue_labels=labels,
+            issue_created_at=issue_details.get("created_at", "unknown"),
+            issue_updated_at=issue_details.get("updated_at", "unknown"),
+            pr_number=pr_info.get("number"),
+            pr_title=pr_info.get("title"),
+            pr_url=pr_info.get("url"),
+            pr_comments_section=pr_comments_section,
+        )
+    else:
+        # PR未作成の場合
+        return PROMPT_TEMPLATE.format(
+            issue_number=issue_details.get("number"),
+            issue_title=issue_details.get("title"),
+            issue_body=issue_details.get("body") or "説明なし",
+            issue_state=issue_details.get("state"),
+            issue_author=issue_details.get("author", "unknown"),
+            issue_labels=labels,
+            issue_created_at=issue_details.get("created_at", "unknown"),
+            issue_updated_at=issue_details.get("updated_at", "unknown"),
+        )
 
 
 def create_comment_body(masked_url: str, summary: dict[str, str]) -> str:
@@ -125,6 +196,7 @@ def execute_with_claude(logger: SimpleLogger, prompt: str) -> int:
     Returns:
         終了コード
     """
+    process = None
     try:
         # Claude Codeプロセスを起動
         process = subprocess.Popen(
@@ -176,7 +248,8 @@ def execute_with_claude(logger: SimpleLogger, prompt: str) -> int:
 
     except subprocess.TimeoutExpired:
         logger.error("Claude Codeの実行がタイムアウトしました（30分以上の処理時間）")
-        process.kill()
+        if process:
+            process.kill()
         return 1
     except FileNotFoundError:
         logger.error("Claude Codeが見つかりません。'claude' コマンドがインストールされているか確認してください。")
@@ -187,6 +260,7 @@ def execute_with_claude(logger: SimpleLogger, prompt: str) -> int:
 
 
 def main() -> None:
+    logger = None
     default_owner, default_repo = get_git_remote_info()
 
     parser = argparse.ArgumentParser(
@@ -252,10 +326,23 @@ def main() -> None:
         # チケット詳細を取得
         issue_details = get_issue_details(args.owner, args.repo, issue_number)
 
+        # ブランチ名から既存PRを確認
+        branch_name = f"feature/{issue_number}"
+        pr_info = None
+        pr_comments = None
+        try:
+            pr_info = get_pr_by_branch_name(args.owner, args.repo, branch_name)
+            if pr_info:
+                # PRが存在する場合、コメントを取得
+                pr_comments = get_pr_comments(args.owner, args.repo, pr_info.get("number"))
+        except RuntimeError as e:
+            # PRが見つからないのはエラーではないので、ログに出すが続行する
+            print(f"⚠ PRの検索中にエラーが発生しました: {e}", file=sys.stderr)
+
         if args.format == "json":
             output = json.dumps(issue_details, indent=2, ensure_ascii=False)
         else:
-            output = render_prompt(issue_details)
+            output = render_prompt(issue_details, pr_info, pr_comments)
 
         if args.execute:
             # ユニークなログファイル名を生成

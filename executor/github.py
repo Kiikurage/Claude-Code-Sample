@@ -512,6 +512,150 @@ def update_ticket_status(
         raise RuntimeError(f"GitHub API error: {error_msg}")
 
 
+def get_pr_by_branch_name(
+    owner: str, repo: str, branch_name: str
+) -> Optional[dict[str, Any]]:
+    """ブランチ名に対応するプルリクエストを取得
+
+    Args:
+        owner: リポジトリオーナー
+        repo: リポジトリ名
+        branch_name: ブランチ名
+
+    Returns:
+        PR情報（見つからない場合はNone）
+
+    Raises:
+        RuntimeError: APIがエラーを返した場合
+    """
+    query = """
+    query($owner:String!, $repo:String!, $branch:String!) {
+      repository(owner: $owner, name: $repo) {
+        pullRequests(first: 10, headRefName: $branch, states: OPEN) {
+          nodes {
+            number
+            title
+            url
+            state
+            headRefName
+          }
+        }
+      }
+    }
+    """
+
+    result = subprocess.run(
+        [
+            "gh",
+            "api",
+            "graphql",
+            "-f",
+            f"query={query}",
+            "-F",
+            f"owner={owner}",
+            "-F",
+            f"repo={repo}",
+            "-F",
+            f"branch={branch_name}",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    data = json.loads(result.stdout)
+
+    if "errors" in data:
+        errors = data["errors"]
+        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
+        raise RuntimeError(f"GitHub API error: {error_msg}")
+
+    prs = (
+        data.get("data", {})
+        .get("repository", {})
+        .get("pullRequests", {})
+        .get("nodes", [])
+    )
+
+    return prs[0] if prs else None
+
+
+def get_pr_comments(
+    owner: str, repo: str, pr_number: int
+) -> list[dict[str, str]]:
+    """プルリクエストのコメントを取得
+
+    Args:
+        owner: リポジトリオーナー
+        repo: リポジトリ名
+        pr_number: PR番号
+
+    Returns:
+        コメント情報のリスト（各要素は{author, body}の辞書）
+
+    Raises:
+        RuntimeError: APIがエラーを返した場合
+    """
+    query = """
+    query($owner:String!, $repo:String!, $number:Int!) {
+      repository(owner: $owner, name: $repo) {
+        pullRequest(number: $number) {
+          comments(first: 100) {
+            nodes {
+              author {
+                login
+              }
+              body
+            }
+          }
+        }
+      }
+    }
+    """
+
+    result = subprocess.run(
+        [
+            "gh",
+            "api",
+            "graphql",
+            "-f",
+            f"query={query}",
+            "-F",
+            f"owner={owner}",
+            "-F",
+            f"repo={repo}",
+            "-F",
+            f"number={pr_number}",
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    data = json.loads(result.stdout)
+
+    if "errors" in data:
+        errors = data["errors"]
+        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
+        raise RuntimeError(f"GitHub API error: {error_msg}")
+
+    comments = (
+        data.get("data", {})
+        .get("repository", {})
+        .get("pullRequest", {})
+        .get("comments", {})
+        .get("nodes", [])
+    )
+
+    return [
+        {
+            "author": comment.get("author", {}).get("login", "unknown"),
+            "body": comment.get("body", ""),
+        }
+        for comment in comments
+    ]
+
+
 def post_issue_comment(
     owner: str, repo: str, issue_number: int, body: str
 ) -> dict[str, Any]:
