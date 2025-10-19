@@ -36,7 +36,12 @@ PROMPT_TEMPLATE = """# チケット #{issue_number}: {issue_title}
 3. 適切なテストを追加する。
 4. 必要に応じてドキュメントを更新する。
 5. 変更をコミットして、プルリクエストを作成する。
-6. プルリクエストの自動マージを有効化する。
+
+    - プルリクエストのメッセージは 「#{issue_number}:(変更の概要)」 とする。
+    - 本文末尾に "Close #{issue_number}" を追加し、チケットを自動でクローズできるようにする。
+    - プルリクエストの自動マージを有効化する。
+
+6. masterブランチへ戻る。
 
 コードの品質に注意し、プロジェクトの標準に従ってください。"""
 
@@ -100,12 +105,12 @@ def log_summary(logger: SimpleLogger, issue_number: int, exit_code: int, duratio
     """
     status = "SUCCESS" if exit_code == 0 else "FAILED"
 
-    logger.log("")
-    logger.log("=" * 80)
-    logger.log(f"Issue #{issue_number} execution: {status}")
-    logger.log(f"Exit Code: {exit_code}")
-    logger.log(f"Duration: {duration:.2f}s")
-    logger.log("=" * 80)
+    logger.info("")
+    logger.info("=" * 80)
+    logger.info(f"Issue #{issue_number} execution: {status}")
+    logger.info(f"Exit Code: {exit_code}")
+    logger.info(f"Duration: {duration:.2f}s")
+    logger.info("=" * 80)
 
 
 def execute_with_claude(logger: SimpleLogger, prompt: str) -> int:
@@ -127,6 +132,7 @@ def execute_with_claude(logger: SimpleLogger, prompt: str) -> int:
                 "claude",
                 "-p", prompt,
                 "--output-format", "text",
+                "--verbose",
                 "--allowedTools", "Read,Grep,WebSearch",
                 "--permission-mode", "acceptEdits"
             ],
