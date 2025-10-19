@@ -27,7 +27,7 @@ export function NoteEditor({
 
 		const timer = setTimeout(() => {
 			setPreviewContent(note.content);
-		}, 2000);
+		}, 1000);
 
 		return () => clearTimeout(timer);
 	}, [note]);
@@ -147,8 +147,9 @@ export function NoteEditor({
 						flex: 1,
 						display: "grid",
 						gridTemplateColumns: "1fr 1fr",
-						gap: "16px",
+						gap: "0",
 						overflow: "hidden",
+						borderLeft: "1px solid #e9ecef",
 					}}
 				>
 					<textarea
@@ -159,8 +160,8 @@ export function NoteEditor({
 						style={{
 							padding: "12px",
 							fontSize: "14px",
-							border: "1px solid #ccc",
-							borderRadius: "4px",
+							border: "none",
+							borderRadius: "0",
 							resize: "none",
 							boxSizing: "border-box",
 							fontFamily: "inherit",

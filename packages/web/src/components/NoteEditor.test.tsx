@@ -201,7 +201,7 @@ describe("NoteEditor", () => {
 		expect(contentTextarea).toBeTruthy();
 	});
 
-	test("should debounce preview updates by 2 seconds", async () => {
+	test("should debounce preview updates by 1 second", async () => {
 		const mockUpdate = () => {};
 		const mockDelete = () => {};
 
