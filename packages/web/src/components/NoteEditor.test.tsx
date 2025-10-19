@@ -23,7 +23,7 @@ describe("NoteEditor", () => {
 			<NoteEditor note={null} onUpdate={mockUpdate} onDelete={mockDelete} />,
 		);
 
-		expect(screen.getByText("ノートを選択してください")).toBeTruthy();
+		expect(screen.getByText("ノートを選択してね")).toBeTruthy();
 	});
 
 	test("should display note title and content", () => {
@@ -66,7 +66,7 @@ describe("NoteEditor", () => {
 
 	test("should call onUpdate when title is changed", () => {
 		let updatedTitle = "";
-		const mockUpdate = (id: string, title: string, content: string) => {
+		const mockUpdate = (_id: string, title: string, _content: string) => {
 			updatedTitle = title;
 		};
 		const mockDelete = () => {};
@@ -89,7 +89,7 @@ describe("NoteEditor", () => {
 
 	test("should call onUpdate when content is changed", () => {
 		let updatedContent = "";
-		const mockUpdate = (id: string, title: string, content: string) => {
+		const mockUpdate = (_id: string, _title: string, content: string) => {
 			updatedContent = content;
 		};
 		const mockDelete = () => {};
@@ -128,7 +128,7 @@ describe("NoteEditor", () => {
 	test("should call onDelete when delete button is clicked and confirmed", () => {
 		let deleteCalled = false;
 		const mockUpdate = () => {};
-		const mockDelete = (id: string) => {
+		const mockDelete = (_id: string) => {
 			deleteCalled = true;
 		};
 
@@ -156,7 +156,7 @@ describe("NoteEditor", () => {
 	test("should not call onDelete when delete is cancelled", () => {
 		let deleteCalled = false;
 		const mockUpdate = () => {};
-		const mockDelete = (id: string) => {
+		const mockDelete = (_id: string) => {
 			deleteCalled = true;
 		};
 
