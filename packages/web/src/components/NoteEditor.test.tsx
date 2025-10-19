@@ -42,7 +42,7 @@ describe("NoteEditor", () => {
 			"タイトルを入力してください",
 		) as HTMLInputElement;
 		const contentTextarea = screen.getByPlaceholderText(
-			"内容を入力してください",
+			"内容を入力してください。Markdownに対応しています。",
 		) as HTMLTextAreaElement;
 
 		expect(titleInput.value).toBe("Test Note");
@@ -103,7 +103,7 @@ describe("NoteEditor", () => {
 		);
 
 		const contentTextarea = screen.getByPlaceholderText(
-			"内容を入力してください",
+			"内容を入力してください。Markdownに対応しています。",
 		) as HTMLTextAreaElement;
 		fireEvent.change(contentTextarea, { target: { value: "New Content" } });
 
