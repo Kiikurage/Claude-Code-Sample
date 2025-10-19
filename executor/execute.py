@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from github import get_git_remote_info, get_issue_details, post_issue_comment
+from github import get_git_remote_info, get_issue_details, post_issue_comment, fetch_tickets
 from logger import SimpleLogger
 
 
@@ -205,11 +205,11 @@ def main() -> None:
         help="リポジトリ名 (デフォルト: git remote originから自動取得)",
     )
     parser.add_argument(
-        "-i",
-        "--issue",
+        "-p",
+        "--project",
         type=int,
         required=True,
-        help="Issue番号 (e.g., 10)",
+        help="プロジェクト番号 (e.g., 1)",
     )
     parser.add_argument(
         "--format",
@@ -232,8 +232,25 @@ def main() -> None:
         )
 
     try:
+        # Backlogから最初のチケットを取得
+        tickets = fetch_tickets(args.owner, args.repo, args.project, "Backlog")
+
+        if not tickets:
+            print("Error: Backlogにチケットがありません", file=sys.stderr)
+            sys.exit(1)
+
+        # 最初のチケットを選ぶ
+        first_ticket = tickets[0]
+        issue_number = first_ticket.get("number")
+
+        if not issue_number:
+            print("Error: チケット番号を取得できません", file=sys.stderr)
+            sys.exit(1)
+
+        print(f"✓ Backlogから最初のチケットを取得しました: #{issue_number}")
+
         # チケット詳細を取得
-        issue_details = get_issue_details(args.owner, args.repo, args.issue)
+        issue_details = get_issue_details(args.owner, args.repo, issue_number)
 
         if args.format == "json":
             output = json.dumps(issue_details, indent=2, ensure_ascii=False)
@@ -244,7 +261,7 @@ def main() -> None:
             # ユニークなログファイル名を生成
             log_dir = Path(__file__).parent / "logs"
             hash_value = hashlib.sha256(output.encode()).hexdigest()[:8]
-            log_filename = f"issue_{args.issue}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{hash_value}.log"
+            log_filename = f"issue_{issue_number}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{hash_value}.log"
             log_file_path = log_dir / log_filename
 
             # ロガーをセットアップ
@@ -262,7 +279,7 @@ def main() -> None:
             print(f"✓ Claude Codeで実行完了")
 
             # サマリーをログに記録
-            log_summary(logger, args.issue, exit_code, duration)
+            log_summary(logger, issue_number, exit_code, duration)
 
             # サマリーを作成
             summary = {
@@ -278,9 +295,9 @@ def main() -> None:
             comment_body = create_comment_body(masked_url, summary)
 
             # コメントを投稿
-            post_issue_comment(args.owner, args.repo, args.issue, comment_body)
-            logger.info(f"✓ コメントをIssue #{args.issue} にポストしました")
-            print(f"✓ コメントをIssue #{args.issue} にポストしました")
+            post_issue_comment(args.owner, args.repo, issue_number, comment_body)
+            logger.info(f"✓ コメントをIssue #{issue_number} にポストしました")
+            print(f"✓ コメントをIssue #{issue_number} にポストしました")
 
             print(f"ログファイル: {logger.get_file_path()}")
             print(f"マスクURL: {masked_url}")
