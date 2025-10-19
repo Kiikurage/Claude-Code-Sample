@@ -30,6 +30,9 @@ export function App(): ReactElement {
 	});
 
 	const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+	const [selectedNoteIds, setSelectedNoteIds] = useState<Set<string>>(
+		new Set(),
+	);
 
 	useEffect(() => {
 		try {
@@ -65,8 +68,42 @@ export function App(): ReactElement {
 		}
 	};
 
-	const handleSelectNote = (id: string) => {
-		setSelectedNoteId(id);
+	const handleSelectNote = (id: string, ctrlKey: boolean) => {
+		if (ctrlKey) {
+			// Ctrl キーが押されている場合は複数選択
+			setSelectedNoteIds((prev) => {
+				const newSet = new Set(prev);
+				if (newSet.has(id)) {
+					newSet.delete(id);
+				} else {
+					newSet.add(id);
+				}
+				return newSet;
+			});
+		} else {
+			// Ctrl キーが押されていない場合は通常選択
+			setSelectedNoteIds(new Set());
+			setSelectedNoteId(id);
+		}
+	};
+
+	const handleDeleteSelectedNotes = () => {
+		if (selectedNoteIds.size === 0) return;
+
+		const confirmed = window.confirm(
+			`${selectedNoteIds.size}個のノートを削除しますか？`,
+		);
+		if (!confirmed) return;
+
+		setNotes((prevNotes) =>
+			prevNotes.filter((note) => !selectedNoteIds.has(note.id)),
+		);
+		setSelectedNoteIds(new Set());
+		setSelectedNoteId(null);
+	};
+
+	const handleCancelSelection = () => {
+		setSelectedNoteIds(new Set());
 	};
 
 	const selectedNote = notes.find((note) => note.id === selectedNoteId) || null;
@@ -77,8 +114,11 @@ export function App(): ReactElement {
 				<NoteListSidebar
 					notes={notes}
 					selectedNoteId={selectedNoteId}
+					selectedNoteIds={selectedNoteIds}
 					onSelectNote={handleSelectNote}
 					onAddNote={handleAddNote}
+					onDeleteSelectedNotes={handleDeleteSelectedNotes}
+					onCancelSelection={handleCancelSelection}
 				/>
 			}
 			main={
