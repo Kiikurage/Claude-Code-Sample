@@ -24,11 +24,11 @@ export function MarkdownPreview({
 				flex: 1,
 				padding: "12px",
 				fontSize: "14px",
-				border: "1px solid #ccc",
-				borderRadius: "4px",
+				border: "none",
+				borderRadius: "0",
 				boxSizing: "border-box",
 				overflow: "auto",
-				backgroundColor: "#f9f9f9",
+				backgroundColor: "transparent",
 				lineHeight: "1.6",
 			}}
 		/>
