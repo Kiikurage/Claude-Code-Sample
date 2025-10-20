@@ -138,7 +138,7 @@ export function NoteEditor({
 					type="text"
 					value={note.title}
 					onChange={handleTitleChange}
-					placeholder="タイトルを入力してください"
+					placeholder="タイトル"
 					style={{
 						fontSize: "28px",
 						fontWeight: "bold",
