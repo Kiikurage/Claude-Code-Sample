@@ -39,7 +39,7 @@ describe("NoteEditor", () => {
 		);
 
 		const titleInput = screen.getByPlaceholderText(
-			"タイトルを入力してください",
+			"タイトル",
 		) as HTMLInputElement;
 		const contentTextarea = screen.getByPlaceholderText(
 			"内容を入力してください。Markdownに対応しています。",
@@ -80,7 +80,7 @@ describe("NoteEditor", () => {
 		);
 
 		const titleInput = screen.getByPlaceholderText(
-			"タイトルを入力してください",
+			"タイトル",
 		) as HTMLInputElement;
 		fireEvent.change(titleInput, { target: { value: "New Title" } });
 
@@ -287,6 +287,24 @@ describe("NoteEditor", () => {
 		expect(updatedTextarea.value).toBe("Content 2");
 	});
 
+	test("should display title placeholder as 'タイトル'", () => {
+		const mockUpdate = () => {};
+		const mockDelete = () => {};
+
+		render(
+			<NoteEditor
+				note={mockNote}
+				onUpdate={mockUpdate}
+				onDelete={mockDelete}
+			/>,
+		);
+
+		const titleInput = screen.getByPlaceholderText(
+			"タイトル",
+		) as HTMLInputElement;
+		expect(titleInput.placeholder).toBe("タイトル");
+	});
+
 	test("should clear previous note preview when switching notes", () => {
 		const mockUpdate = () => {};
 		const mockDelete = () => {};
@@ -316,7 +334,7 @@ describe("NoteEditor", () => {
 
 		// Verify initial title is displayed
 		const titleInput = screen.getByPlaceholderText(
-			"タイトルを入力してください",
+			"タイトル",
 		) as HTMLInputElement;
 		expect(titleInput.value).toBe("Note 1");
 
@@ -332,7 +350,7 @@ describe("NoteEditor", () => {
 
 		// Verify title changed to note 2 (indicating component remounted)
 		const updatedTitleInput = screen.getByPlaceholderText(
-			"タイトルを入力してください",
+			"タイトル",
 		) as HTMLInputElement;
 		expect(updatedTitleInput.value).toBe("Note 2");
 	});
