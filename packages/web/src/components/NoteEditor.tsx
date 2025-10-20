@@ -4,6 +4,7 @@
  */
 
 import type { Note } from "@app/common";
+import { formatCreatedDate } from "@app/common";
 import type { ChangeEventHandler, ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { MarkdownPreview } from "./MarkdownPreview.js";
@@ -20,7 +21,9 @@ export function NoteEditor({
 	onDelete,
 }: NoteEditorProps): ReactElement {
 	// Initialize with note content for immediate rendering on first load
-	const [previewContent, setPreviewContent] = useState(() => note?.content ?? "");
+	const [previewContent, setPreviewContent] = useState(
+		() => note?.content ?? "",
+	);
 
 	// Debounce preview updates to avoid performance issues (but skip initial render)
 	useEffect(() => {
@@ -28,7 +31,7 @@ export function NoteEditor({
 
 		// Update preview immediately
 		setPreviewContent(note.content);
-	}, [note?.id]);
+	}, [note]);
 
 	// Debounce subsequent content changes
 	useEffect(() => {
@@ -39,7 +42,7 @@ export function NoteEditor({
 		}, 1000);
 
 		return () => clearTimeout(timer);
-	}, [note?.content]);
+	}, [note]);
 
 	if (!note) {
 		return (
@@ -94,7 +97,7 @@ export function NoteEditor({
 				}}
 			>
 				<div style={{ fontSize: "12px", color: "#6c757d" }}>
-					作成日時: {note.createdAt.toLocaleString("ja-JP")}
+					作成日時: {formatCreatedDate(note.createdAt)}
 				</div>
 				<button
 					type="button"

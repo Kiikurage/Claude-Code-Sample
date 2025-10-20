@@ -4,6 +4,7 @@
  */
 
 import type { Note } from "@app/common";
+import { formatCreatedDate } from "@app/common";
 import type { ReactElement } from "react";
 import { BuildInfo } from "./BuildInfo.js";
 
@@ -170,10 +171,9 @@ export function NoteListSidebar({
 									border: "none",
 									borderBottom: "1px solid #ddd",
 									cursor: "pointer",
-									backgroundColor:
-										selectedNoteIds.includes(note.id)
-											? "#e7f3ff"
-											: "transparent",
+									backgroundColor: selectedNoteIds.includes(note.id)
+										? "#e7f3ff"
+										: "transparent",
 									transition: "background-color 0.2s",
 									textAlign: "left",
 								}}
@@ -204,8 +204,9 @@ export function NoteListSidebar({
 							>
 								<div
 									style={{
-										fontWeight:
-											selectedNoteIds.includes(note.id) ? "bold" : "normal",
+										fontWeight: selectedNoteIds.includes(note.id)
+											? "bold"
+											: "normal",
 										marginBottom: "4px",
 										fontSize: "14px",
 										overflow: "hidden",
@@ -221,7 +222,7 @@ export function NoteListSidebar({
 										color: "#6c757d",
 									}}
 								>
-									{note.createdAt.toLocaleDateString("ja-JP")}
+									{formatCreatedDate(note.createdAt)}
 								</div>
 							</button>
 						))}
