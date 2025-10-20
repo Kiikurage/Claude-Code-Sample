@@ -4,6 +4,7 @@
  */
 
 import type { Note } from "@app/common";
+import { formatCreatedDate } from "@app/common";
 import type { ChangeEventHandler, ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { MarkdownPreview } from "./MarkdownPreview.js";
@@ -94,7 +95,7 @@ export function NoteEditor({
 				}}
 			>
 				<div style={{ fontSize: "12px", color: "#6c757d" }}>
-					作成日時: {note.createdAt.toLocaleString("ja-JP")}
+					作成日時: {formatCreatedDate(note.createdAt)}
 				</div>
 				<button
 					type="button"

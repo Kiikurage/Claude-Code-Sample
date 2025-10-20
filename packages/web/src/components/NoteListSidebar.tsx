@@ -4,6 +4,7 @@
  */
 
 import type { Note } from "@app/common";
+import { formatCreatedDate } from "@app/common";
 import type { ReactElement } from "react";
 import { BuildInfo } from "./BuildInfo.js";
 
@@ -221,7 +222,7 @@ export function NoteListSidebar({
 										color: "#6c757d",
 									}}
 								>
-									{note.createdAt.toLocaleDateString("ja-JP")}
+									{formatCreatedDate(note.createdAt)}
 								</div>
 							</button>
 						))}

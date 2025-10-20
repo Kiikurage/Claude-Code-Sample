@@ -102,3 +102,20 @@ export function validateNoteUpdate(data: unknown): {
 		error: result.error,
 	};
 }
+
+/**
+ * Formats a date to the standard format: YYYY:MM:DD-hh:mm:ss
+ * Ensures all numeric components are zero-padded to 2 digits
+ * @param date - The date to format
+ * @returns Formatted date string in YYYY:MM:DD-hh:mm:ss format
+ */
+export function formatCreatedDate(date: Date): string {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	const hours = String(date.getHours()).padStart(2, "0");
+	const minutes = String(date.getMinutes()).padStart(2, "0");
+	const seconds = String(date.getSeconds()).padStart(2, "0");
+
+	return `${year}:${month}:${day}-${hours}:${minutes}:${seconds}`;
+}

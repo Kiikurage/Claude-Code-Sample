@@ -18,6 +18,7 @@ from github import (
     fetch_tickets,
     get_pr_by_branch_name,
     get_pr_comments,
+    update_ticket_status,
 )
 from logger import SimpleLogger
 
@@ -345,6 +346,15 @@ def main() -> None:
             output = render_prompt(issue_details, pr_info, pr_comments)
 
         if args.execute:
+            # チケットのステータスを "In progress" に更新
+            try:
+                update_ticket_status(args.owner, args.repo, args.project, issue_number, "In progress")
+                print(f"✓ チケット #{issue_number} のステータスを 'In progress' に更新しました")
+            except RuntimeError as e:
+                print(f"⚠ ステータス更新中にエラーが発生しました: {e}", file=sys.stderr)
+                # ステータス更新に失敗しても処理を続行
+                pass
+
             # ユニークなログファイル名を生成
             log_dir = Path(__file__).parent / "logs"
             hash_value = hashlib.sha256(output.encode()).hexdigest()[:8]
@@ -399,7 +409,7 @@ def main() -> None:
     except Exception as e:
         error_msg = f"Error: {e}"
         print(error_msg, file=sys.stderr)
-        if 'logger' in locals():
+        if logger is not None:
             logger.error(error_msg)
         sys.exit(1)
 

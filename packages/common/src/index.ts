@@ -6,4 +6,5 @@ export {
 	parseNote,
 	validateNote,
 	validateNoteUpdate,
+	formatCreatedDate,
 } from "./note.js";

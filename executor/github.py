@@ -6,6 +6,73 @@ import subprocess
 from typing import Any, Optional
 
 
+def _clean_github_error(error_msg: str) -> str:
+    """GitHub APIエラーメッセージをクリーンアップ
+
+    Args:
+        error_msg: 生のエラーメッセージ
+
+    Returns:
+        クリーンアップされたエラーメッセージ
+    """
+    # gh: プレフィックスを削除
+    if error_msg.startswith("gh: "):
+        error_msg = error_msg[4:]
+
+    # 複数行のエラーの場合、最初の1行だけを使用
+    lines = error_msg.strip().split("\n")
+    return lines[0] if lines else error_msg
+
+
+def _call_github_graphql(
+    query_or_mutation: str, variables: dict[str, str] | None = None
+) -> dict[str, Any]:
+    """GitHub GraphQL APIを呼び出す共通関数
+
+    Args:
+        query_or_mutation: GraphQL クエリまたはミューテーション
+        variables: クエリのパラメータ（オプション）
+
+    Returns:
+        APIレスポンスのdata部分
+
+    Raises:
+        RuntimeError: API呼び出しが失敗した場合
+    """
+    cmd = [
+        "gh",
+        "api",
+        "graphql",
+        "-f",
+        f"query={query_or_mutation}",
+    ]
+
+    if variables:
+        for key, value in variables.items():
+            cmd.extend(["-F", f"{key}={value}"])
+
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    if result.returncode != 0:
+        # gh コマンド自体が失敗した場合
+        error_msg = result.stderr.strip() if result.stderr else result.stdout.strip()
+        raise RuntimeError(f"GitHub API error: {_clean_github_error(error_msg)}")
+
+    data = json.loads(result.stdout)
+
+    if "errors" in data:
+        errors = data["errors"]
+        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
+        raise RuntimeError(f"GitHub API error: {error_msg}")
+
+    return data.get("data", {})
+
+
 def get_git_remote_info() -> tuple[Optional[str], Optional[str]]:
     """Gitのremote originからオーナーとリポジトリ名を取得
 
@@ -44,8 +111,6 @@ def query_github_project(
         APIレスポンスのデータ部分
 
     Raises:
-        subprocess.CalledProcessError: gh APIコマンドが失敗した場合
-        json.JSONDecodeError: レスポンスが無効なJSONの場合
         RuntimeError: APIがエラーを返した場合
     """
     query = """
@@ -81,33 +146,15 @@ def query_github_project(
     }
     """
 
-    result = subprocess.run(
-        [
-            "gh",
-            "api",
-            "graphql",
-            "-f",
-            f"query={query}",
-            "-F",
-            f"owner={owner}",
-            "-F",
-            f"repo={repo}",
-            "-F",
-            f"number={project_number}",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
+    data = _call_github_graphql(
+        query,
+        {
+            "owner": owner,
+            "repo": repo,
+            "number": str(project_number),
+        }
     )
-
-    data = json.loads(result.stdout)
-
-    if "errors" in data:
-        errors = data["errors"]
-        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
-        raise RuntimeError(f"GitHub API error: {error_msg}")
-
-    return data.get("data", {})
+    return data
 
 
 def extract_tickets(api_data: dict[str, Any]) -> list[dict[str, Any]]:
@@ -222,33 +269,15 @@ def get_project_info(
     }
     """
 
-    result = subprocess.run(
-        [
-            "gh",
-            "api",
-            "graphql",
-            "-f",
-            f"query={query}",
-            "-F",
-            f"owner={owner}",
-            "-F",
-            f"repo={repo}",
-            "-F",
-            f"number={project_number}",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
+    data = _call_github_graphql(
+        query,
+        {
+            "owner": owner,
+            "repo": repo,
+            "number": str(project_number),
+        }
     )
-
-    data = json.loads(result.stdout)
-
-    if "errors" in data:
-        errors = data["errors"]
-        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
-        raise RuntimeError(f"GitHub API error: {error_msg}")
-
-    return data.get("data", {}).get("repository", {}).get("projectV2", {})
+    return data.get("repository", {}).get("projectV2", {})
 
 
 def get_issue_item_id(
@@ -287,35 +316,17 @@ def get_issue_item_id(
     }
     """
 
-    result = subprocess.run(
-        [
-            "gh",
-            "api",
-            "graphql",
-            "-f",
-            f"query={query}",
-            "-F",
-            f"owner={owner}",
-            "-F",
-            f"repo={repo}",
-            "-F",
-            f"number={project_number}",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
+    data = _call_github_graphql(
+        query,
+        {
+            "owner": owner,
+            "repo": repo,
+            "number": str(project_number),
+        }
     )
 
-    data = json.loads(result.stdout)
-
-    if "errors" in data:
-        errors = data["errors"]
-        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
-        raise RuntimeError(f"GitHub API error: {error_msg}")
-
     items = (
-        data.get("data", {})
-        .get("repository", {})
+        data.get("repository", {})
         .get("projectV2", {})
         .get("items", {})
         .get("nodes", [])
@@ -366,33 +377,16 @@ def get_issue_details(owner: str, repo: str, issue_number: int) -> dict[str, Any
     }
     """
 
-    result = subprocess.run(
-        [
-            "gh",
-            "api",
-            "graphql",
-            "-f",
-            f"query={query}",
-            "-F",
-            f"owner={owner}",
-            "-F",
-            f"repo={repo}",
-            "-F",
-            f"number={issue_number}",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
+    data = _call_github_graphql(
+        query,
+        {
+            "owner": owner,
+            "repo": repo,
+            "number": str(issue_number),
+        }
     )
 
-    data = json.loads(result.stdout)
-
-    if "errors" in data:
-        errors = data["errors"]
-        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
-        raise RuntimeError(f"GitHub API error: {error_msg}")
-
-    issue = data.get("data", {}).get("repository", {}).get("issue", {})
+    issue = data.get("repository", {}).get("issue", {})
 
     if not issue:
         raise RuntimeError(f"Issue #{issue_number} が見つかりません")
@@ -544,35 +538,17 @@ def get_pr_by_branch_name(
     }
     """
 
-    result = subprocess.run(
-        [
-            "gh",
-            "api",
-            "graphql",
-            "-f",
-            f"query={query}",
-            "-F",
-            f"owner={owner}",
-            "-F",
-            f"repo={repo}",
-            "-F",
-            f"branch={branch_name}",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
+    data = _call_github_graphql(
+        query,
+        {
+            "owner": owner,
+            "repo": repo,
+            "branch": branch_name,
+        }
     )
 
-    data = json.loads(result.stdout)
-
-    if "errors" in data:
-        errors = data["errors"]
-        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
-        raise RuntimeError(f"GitHub API error: {error_msg}")
-
     prs = (
-        data.get("data", {})
-        .get("repository", {})
+        data.get("repository", {})
         .get("pullRequests", {})
         .get("nodes", [])
     )
@@ -613,35 +589,17 @@ def get_pr_comments(
     }
     """
 
-    result = subprocess.run(
-        [
-            "gh",
-            "api",
-            "graphql",
-            "-f",
-            f"query={query}",
-            "-F",
-            f"owner={owner}",
-            "-F",
-            f"repo={repo}",
-            "-F",
-            f"number={pr_number}",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
+    data = _call_github_graphql(
+        query,
+        {
+            "owner": owner,
+            "repo": repo,
+            "number": str(pr_number),
+        }
     )
 
-    data = json.loads(result.stdout)
-
-    if "errors" in data:
-        errors = data["errors"]
-        error_msg = ", ".join(e.get("message", str(e)) for e in errors)
-        raise RuntimeError(f"GitHub API error: {error_msg}")
-
     comments = (
-        data.get("data", {})
-        .get("repository", {})
+        data.get("repository", {})
         .get("pullRequest", {})
         .get("comments", {})
         .get("nodes", [])

@@ -7,6 +7,7 @@ import {
 	parseNote,
 	validateNote,
 	validateNoteUpdate,
+	formatCreatedDate,
 } from "./note.js";
 
 describe("Note Schema", () => {
@@ -301,6 +302,86 @@ describe("Note Schema", () => {
 			expect(update3.title).toBeDefined();
 			expect(update3.content).toBeDefined();
 			expect(update4).toEqual({});
+		});
+	});
+
+	describe("formatCreatedDate", () => {
+		it("should format date with proper zero-padding", () => {
+			const date = new Date("2024-01-05T09:08:07.000Z");
+			const formatted = formatCreatedDate(date);
+			expect(formatted).toMatch(/^\d{4}:\d{2}:\d{2}-\d{2}:\d{2}:\d{2}$/);
+		});
+
+		it("should format single-digit months with leading zero", () => {
+			const date = new Date("2024-01-15T10:20:30.000Z");
+			const formatted = formatCreatedDate(date);
+			expect(formatted).toContain(":01:");
+		});
+
+		it("should format single-digit days with leading zero", () => {
+			const date = new Date("2024-01-05T10:20:30.000Z");
+			const formatted = formatCreatedDate(date);
+			expect(formatted).toMatch(/2024:01:05-10:20:30/);
+		});
+
+		it("should format single-digit hours with leading zero", () => {
+			const date = new Date("2024-01-15T05:20:30.000Z");
+			const formatted = formatCreatedDate(date);
+			expect(formatted).toMatch(/2024:01:15-05:20:30/);
+		});
+
+		it("should format single-digit minutes with leading zero", () => {
+			const date = new Date("2024-01-15T10:05:30.000Z");
+			const formatted = formatCreatedDate(date);
+			expect(formatted).toMatch(/2024:01:15-10:05:30/);
+		});
+
+		it("should format single-digit seconds with leading zero", () => {
+			const date = new Date("2024-01-15T10:20:05.000Z");
+			const formatted = formatCreatedDate(date);
+			expect(formatted).toMatch(/2024:01:15-10:20:05/);
+		});
+
+		it("should return correct format YYYY:MM:DD-hh:mm:ss", () => {
+			const date = new Date("2024-12-31T23:59:59.000Z");
+			const formatted = formatCreatedDate(date);
+			expect(formatted).toBe("2024:12:31-23:59:59");
+		});
+
+		it("should handle dates in various months", () => {
+			const testCases = [
+				{ date: new Date("2024-01-15T10:20:30.000Z"), expected: "2024:01:15-10:20:30" },
+				{ date: new Date("2024-06-15T10:20:30.000Z"), expected: "2024:06:15-10:20:30" },
+				{ date: new Date("2024-12-15T10:20:30.000Z"), expected: "2024:12:15-10:20:30" },
+			];
+
+			for (const { date, expected } of testCases) {
+				expect(formatCreatedDate(date)).toBe(expected);
+			}
+		});
+
+		it("should handle dates in various days", () => {
+			const testCases = [
+				{ date: new Date("2024-01-01T10:20:30.000Z"), expected: "2024:01:01-10:20:30" },
+				{ date: new Date("2024-01-15T10:20:30.000Z"), expected: "2024:01:15-10:20:30" },
+				{ date: new Date("2024-01-31T10:20:30.000Z"), expected: "2024:01:31-10:20:30" },
+			];
+
+			for (const { date, expected } of testCases) {
+				expect(formatCreatedDate(date)).toBe(expected);
+			}
+		});
+
+		it("should handle dates in various times", () => {
+			const testCases = [
+				{ date: new Date("2024-01-15T00:00:00.000Z"), expected: "2024:01:15-00:00:00" },
+				{ date: new Date("2024-01-15T12:30:45.000Z"), expected: "2024:01:15-12:30:45" },
+				{ date: new Date("2024-01-15T23:59:59.000Z"), expected: "2024:01:15-23:59:59" },
+			];
+
+			for (const { date, expected } of testCases) {
+				expect(formatCreatedDate(date)).toBe(expected);
+			}
 		});
 	});
 });
