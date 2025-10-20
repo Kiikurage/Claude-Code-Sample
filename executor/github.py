@@ -558,7 +558,7 @@ def get_pr_by_branch_name(
 
 def get_pr_comments(
     owner: str, repo: str, pr_number: int
-) -> list[dict[str, str]]:
+) -> list[dict[str, Any]]:
     """プルリクエストのコメントを取得
 
     Args:
@@ -567,7 +567,7 @@ def get_pr_comments(
         pr_number: PR番号
 
     Returns:
-        コメント情報のリスト（各要素は{author, body}の辞書）
+        コメント情報のリスト（各要素は{id, author, body}の辞書）
 
     Raises:
         RuntimeError: APIがエラーを返した場合
@@ -578,6 +578,7 @@ def get_pr_comments(
         pullRequest(number: $number) {
           comments(first: 100) {
             nodes {
+              id
               author {
                 login
               }
@@ -607,6 +608,7 @@ def get_pr_comments(
 
     return [
         {
+            "id": comment.get("id", ""),
             "author": comment.get("author", {}).get("login", "unknown"),
             "body": comment.get("body", ""),
         }
@@ -654,3 +656,36 @@ def post_issue_comment(
         )
 
     return {"status": "success"}
+
+
+def add_reaction_to_comment(
+    owner: str, repo: str, comment_id: str, content: str = "+1"
+) -> None:
+    """コメントにリアクションを追加
+
+    Args:
+        owner: リポジトリオーナー
+        repo: リポジトリ名
+        comment_id: コメントID (GraphQL ID)
+        content: リアクションの種類（デフォルト: "+1"）
+                可能な値: "+1", "-1", "laugh", "confused", "heart", "rocket", "eyes"
+
+    Raises:
+        RuntimeError: APIがエラーを返した場合
+    """
+    result = subprocess.run(
+        [
+            "gh",
+            "api",
+            f"repos/{owner}/{repo}/issues/comments/{comment_id}/reactions",
+            "-f",
+            f"content={content}",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    if result.returncode != 0:
+        error_msg = result.stderr.strip() if result.stderr else result.stdout.strip()
+        raise RuntimeError(f"Failed to add reaction: {error_msg}")

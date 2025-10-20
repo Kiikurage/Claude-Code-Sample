@@ -19,6 +19,7 @@ from github import (
     get_pr_by_branch_name,
     get_pr_comments,
     update_ticket_status,
+    add_reaction_to_comment,
 )
 from logger import SimpleLogger
 
@@ -397,6 +398,23 @@ def main() -> None:
             post_issue_comment(args.owner, args.repo, issue_number, comment_body)
             logger.info(f"✓ コメントをIssue #{issue_number} にポストしました")
             print(f"✓ コメントをIssue #{issue_number} にポストしました")
+
+            # PRが存在する場合、最新コメントに :+1: リアクションを追加
+            if pr_info:
+                try:
+                    # 最新のコメント情報を取得（投稿したコメントを含める）
+                    updated_pr_comments = get_pr_comments(args.owner, args.repo, pr_info.get("number"))
+                    if updated_pr_comments:
+                        # 最後のコメントを取得
+                        latest_comment = updated_pr_comments[-1]
+                        comment_id = latest_comment.get("id")
+                        if comment_id:
+                            add_reaction_to_comment(args.owner, args.repo, comment_id, "+1")
+                            logger.info(f"✓ 最新コメントに :+1: リアクションを追加しました")
+                            print(f"✓ 最新コメントに :+1: リアクションを追加しました")
+                except RuntimeError as e:
+                    logger.warning(f"⚠ リアクション追加中にエラーが発生しました: {e}")
+                    print(f"⚠ リアクション追加中にエラーが発生しました: {e}", file=sys.stderr)
 
             print(f"ログファイル: {logger.get_file_path()}")
             print(f"マスクURL: {masked_url}")

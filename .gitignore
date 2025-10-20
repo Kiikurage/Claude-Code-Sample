@@ -10,3 +10,4 @@ data/db/
 REQUIREMENTS.md
 WORK_PLAN.md
 full_scan_progress.json
+__pycache__
