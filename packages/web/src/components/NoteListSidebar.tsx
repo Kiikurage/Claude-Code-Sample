@@ -171,10 +171,9 @@ export function NoteListSidebar({
 									border: "none",
 									borderBottom: "1px solid #ddd",
 									cursor: "pointer",
-									backgroundColor:
-										selectedNoteIds.includes(note.id)
-											? "#e7f3ff"
-											: "transparent",
+									backgroundColor: selectedNoteIds.includes(note.id)
+										? "#e7f3ff"
+										: "transparent",
 									transition: "background-color 0.2s",
 									textAlign: "left",
 								}}
@@ -205,8 +204,9 @@ export function NoteListSidebar({
 							>
 								<div
 									style={{
-										fontWeight:
-											selectedNoteIds.includes(note.id) ? "bold" : "normal",
+										fontWeight: selectedNoteIds.includes(note.id)
+											? "bold"
+											: "normal",
 										marginBottom: "4px",
 										fontSize: "14px",
 										overflow: "hidden",

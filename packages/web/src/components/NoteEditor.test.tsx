@@ -61,7 +61,7 @@ describe("NoteEditor", () => {
 			/>,
 		);
 
-		expect(screen.getByText(/作成日時: 2024\/1\/1/)).toBeTruthy();
+		expect(screen.getByText(/作成日時: 2024:01:01-12:00:00/)).toBeTruthy();
 	});
 
 	test("should call onUpdate when title is changed", () => {

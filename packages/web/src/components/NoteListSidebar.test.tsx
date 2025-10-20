@@ -350,5 +350,4 @@ describe("NoteListSidebar", () => {
 		// Happy DOM returns hex colors
 		expect(selectedNoteItem.style.backgroundColor).toBe("#e7f3ff");
 	});
-
 });

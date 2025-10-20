@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import {
+	formatCreatedDate,
 	type Note,
 	type NoteUpdate,
 	noteSchema,
@@ -7,7 +8,6 @@ import {
 	parseNote,
 	validateNote,
 	validateNoteUpdate,
-	formatCreatedDate,
 } from "./note.js";
 
 describe("Note Schema", () => {
@@ -350,9 +350,18 @@ describe("Note Schema", () => {
 
 		it("should handle dates in various months", () => {
 			const testCases = [
-				{ date: new Date("2024-01-15T10:20:30.000Z"), expected: "2024:01:15-10:20:30" },
-				{ date: new Date("2024-06-15T10:20:30.000Z"), expected: "2024:06:15-10:20:30" },
-				{ date: new Date("2024-12-15T10:20:30.000Z"), expected: "2024:12:15-10:20:30" },
+				{
+					date: new Date("2024-01-15T10:20:30.000Z"),
+					expected: "2024:01:15-10:20:30",
+				},
+				{
+					date: new Date("2024-06-15T10:20:30.000Z"),
+					expected: "2024:06:15-10:20:30",
+				},
+				{
+					date: new Date("2024-12-15T10:20:30.000Z"),
+					expected: "2024:12:15-10:20:30",
+				},
 			];
 
 			for (const { date, expected } of testCases) {
@@ -362,9 +371,18 @@ describe("Note Schema", () => {
 
 		it("should handle dates in various days", () => {
 			const testCases = [
-				{ date: new Date("2024-01-01T10:20:30.000Z"), expected: "2024:01:01-10:20:30" },
-				{ date: new Date("2024-01-15T10:20:30.000Z"), expected: "2024:01:15-10:20:30" },
-				{ date: new Date("2024-01-31T10:20:30.000Z"), expected: "2024:01:31-10:20:30" },
+				{
+					date: new Date("2024-01-01T10:20:30.000Z"),
+					expected: "2024:01:01-10:20:30",
+				},
+				{
+					date: new Date("2024-01-15T10:20:30.000Z"),
+					expected: "2024:01:15-10:20:30",
+				},
+				{
+					date: new Date("2024-01-31T10:20:30.000Z"),
+					expected: "2024:01:31-10:20:30",
+				},
 			];
 
 			for (const { date, expected } of testCases) {
@@ -374,9 +392,18 @@ describe("Note Schema", () => {
 
 		it("should handle dates in various times", () => {
 			const testCases = [
-				{ date: new Date("2024-01-15T00:00:00.000Z"), expected: "2024:01:15-00:00:00" },
-				{ date: new Date("2024-01-15T12:30:45.000Z"), expected: "2024:01:15-12:30:45" },
-				{ date: new Date("2024-01-15T23:59:59.000Z"), expected: "2024:01:15-23:59:59" },
+				{
+					date: new Date("2024-01-15T00:00:00.000Z"),
+					expected: "2024:01:15-00:00:00",
+				},
+				{
+					date: new Date("2024-01-15T12:30:45.000Z"),
+					expected: "2024:01:15-12:30:45",
+				},
+				{
+					date: new Date("2024-01-15T23:59:59.000Z"),
+					expected: "2024:01:15-23:59:59",
+				},
 			];
 
 			for (const { date, expected } of testCases) {
